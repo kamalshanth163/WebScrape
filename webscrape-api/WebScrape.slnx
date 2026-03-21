@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="WebScrape.API/WebScrape.API.csproj" />
+  <Project Path="WebScrape.Application/WebScrape.Application.csproj" />
+  <Project Path="WebScrape.Domain/WebScrape.Domain.csproj" />
+  <Project Path="WebScrape.Infrastructure/WebScrape.Infrastructure.csproj" />
+</Solution>

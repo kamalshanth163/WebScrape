@@ -1,0 +1,2504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebScrape — Complete Build Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d12;
+    --bg2: #111520;
+    --bg3: #161c28;
+    --bg4: #1e2635;
+    --border: #252d3d;
+    --accent: #4f8ef7;
+    --accent2: #38d9a9;
+    --accent3: #f77b4f;
+    --text: #e2e8f4;
+    --text2: #8b9ab8;
+    --text3: #556070;
+    --sidebar-w: 280px;
+    --header-h: 56px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h);
+    background: rgba(10,13,18,0.92);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    backdrop-filter: blur(12px);
+    gap: 16px;
+  }
+  .logo {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 0px;
+    white-space: nowrap;
+  }
+  .logo-dot { margin-right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .logo span { color: var(--accent); }
+  .header-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    background: var(--bg4); border: 1px solid var(--border);
+    color: var(--accent2); padding: 3px 10px; border-radius: 20px;
+  }
+  .header-right { margin-left: auto; display: flex; gap: 8px; }
+  .tab-btn {
+    font-family: 'Sora', sans-serif;
+    font-size: 13px; font-weight: 500;
+    background: none; border: 1px solid var(--border);
+    color: var(--text2); padding: 6px 16px; border-radius: 6px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: flex;
+    padding-top: var(--header-h);
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  aside {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  aside::-webkit-scrollbar { width: 4px; }
+  aside::-webkit-scrollbar-track { background: transparent; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-section { margin-bottom: 8px; }
+  .sidebar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--text3); text-transform: uppercase;
+    padding: 8px 20px 4px;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 20px; cursor: pointer;
+    color: var(--text2); font-size: 13px; font-weight: 400;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .sidebar-link:hover { color: var(--text); background: var(--bg3); }
+  .sidebar-link.active {
+    color: var(--accent); border-left-color: var(--accent);
+    background: rgba(79,142,247,0.06);
+  }
+  .sidebar-link .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text3);
+    min-width: 18px;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-width: 0;
+    padding: 48px 60px;
+    max-width: 900px;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 72px;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    background: var(--accent); color: #fff;
+    padding: 4px 10px; border-radius: 4px;
+    white-space: nowrap;
+  }
+  .section-title {
+    font-size: 22px; font-weight: 700; color: var(--text);
+  }
+  .section-desc {
+    color: var(--text2); margin-bottom: 24px; line-height: 1.8;
+    font-size: 14px;
+  }
+
+  /* CALLOUT */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(79,142,247,0.06);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    margin-bottom: 20px; font-size: 14px; color: var(--text2);
+  }
+  .callout.green { border-color: var(--accent2); background: rgba(56,217,169,0.06); }
+  .callout.orange { border-color: var(--accent3); background: rgba(247,123,79,0.06); }
+  .callout strong { color: var(--text); }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg4);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: var(--accent2); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .code-file {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text3);
+  }
+  .copy-btn {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px; background: none;
+    border: 1px solid var(--border); color: var(--text3);
+    padding: 3px 10px; border-radius: 4px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--text3); }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* SYNTAX HIGHLIGHTS */
+  .kw { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .cls { color: #ffcb6b; }
+  .fn { color: #82aaff; }
+  .num { color: #f78c6c; }
+  .attr { color: #89ddff; }
+  .op { color: #89ddff; }
+
+  /* FILE TREE */
+  .filetree {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 2;
+    margin-bottom: 20px;
+  }
+  .ft-dir { color: var(--accent); font-weight: 600; }
+  .ft-file { color: var(--text2); }
+  .ft-comment { color: var(--text3); font-size: 11px; }
+  .ft-indent { padding-left: 20px; }
+  .ft-indent2 { padding-left: 40px; }
+  .ft-indent3 { padding-left: 60px; }
+  .ft-indent4 { padding-left: 80px; }
+
+  /* TABLE */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin-bottom: 20px; font-size: 14px;
+  }
+  th {
+    background: var(--bg4); color: var(--text2);
+    font-weight: 600; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.05em; padding: 10px 14px;
+    border-bottom: 1px solid var(--border); text-align: left;
+  }
+  td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    color: var(--text2); vertical-align: top;
+  }
+  td:first-child { color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+
+  /* INLINE CODE */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg4); border: 1px solid var(--border);
+    color: var(--accent2); padding: 2px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin: 28px 0 12px; }
+  h4 { font-size: 14px; font-weight: 600; color: var(--accent2); margin: 20px 0 10px; }
+  p { margin-bottom: 14px; color: var(--text2); font-size: 14px; }
+  ul, ol { padding-left: 20px; margin-bottom: 14px; color: var(--text2); font-size: 14px; }
+  li { margin-bottom: 6px; }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed; top: var(--header-h); left: 0; right: 0;
+    height: 2px; background: var(--border); z-index: 99;
+  }
+  .progress-fill {
+    height: 100%; background: var(--accent);
+    width: 0%; transition: width 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Web<span>Scrape</span>
+  </div>
+  <div class="header-badge">C# .NET 10 · Full Build Guide</div>
+  <div class="header-right">
+    <button class="tab-btn active" onclick="switchTab('guide')">Build Guide</button>
+    <button class="tab-btn" onclick="switchTab('backend')">Backend Code</button>
+    <button class="tab-btn" onclick="switchTab('frontend')">Frontend Code</button>
+    <button class="tab-btn" onclick="switchTab('deploy')">Deployment</button>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <!-- Guide Sidebar -->
+    <div id="sidebar-guide">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Overview</div>
+        <a class="sidebar-link active" onclick="scrollTo('s0')"><span class="step-num">00</span>Architecture plan</a>
+        <a class="sidebar-link" onclick="scrollTo('s1')"><span class="step-num">01</span>File structure</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Backend setup</div>
+        <a class="sidebar-link" onclick="scrollTo('s2')"><span class="step-num">02</span>Create solution</a>
+        <a class="sidebar-link" onclick="scrollTo('s3')"><span class="step-num">03</span>Domain layer</a>
+        <a class="sidebar-link" onclick="scrollTo('s4')"><span class="step-num">04</span>Application layer</a>
+        <a class="sidebar-link" onclick="scrollTo('s5')"><span class="step-num">05</span>Infrastructure layer</a>
+        <a class="sidebar-link" onclick="scrollTo('s6')"><span class="step-num">06</span>API layer</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Frontend setup</div>
+        <a class="sidebar-link" onclick="scrollTo('s7')"><span class="step-num">07</span>React + Vite setup</a>
+        <a class="sidebar-link" onclick="scrollTo('s8')"><span class="step-num">08</span>Page 1: Scraper</a>
+        <a class="sidebar-link" onclick="scrollTo('s9')"><span class="step-num">09</span>Page 2: Viewer</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Integration</div>
+        <a class="sidebar-link" onclick="scrollTo('s10')"><span class="step-num">10</span>SignalR realtime</a>
+        <a class="sidebar-link" onclick="scrollTo('s11')"><span class="step-num">11</span>Database migrations</a>
+        <a class="sidebar-link" onclick="scrollTo('s12')"><span class="step-num">12</span>Railway deploy</a>
+      </div>
+    </div>
+    <!-- Backend Sidebar -->
+    <div id="sidebar-backend" style="display:none">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Domain</div>
+        <a class="sidebar-link" onclick="scrollTo('b1')">Entities</a>
+        <a class="sidebar-link" onclick="scrollTo('b2')">Enums</a>
+        <a class="sidebar-link" onclick="scrollTo('b3')">Interfaces</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Application</div>
+        <a class="sidebar-link" onclick="scrollTo('b4')">DTOs</a>
+        <a class="sidebar-link" onclick="scrollTo('b5')">Use cases</a>
+        <a class="sidebar-link" onclick="scrollTo('b6')">Validators</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Infrastructure</div>
+        <a class="sidebar-link" onclick="scrollTo('b7')">DbContext</a>
+        <a class="sidebar-link" onclick="scrollTo('b8')">Repositories</a>
+        <a class="sidebar-link" onclick="scrollTo('b9')">Scraper service</a>
+        <a class="sidebar-link" onclick="scrollTo('b10')">Hangfire jobs</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">API</div>
+        <a class="sidebar-link" onclick="scrollTo('b11')">Controllers</a>
+        <a class="sidebar-link" onclick="scrollTo('b12')">Program.cs</a>
+        <a class="sidebar-link" onclick="scrollTo('b13')">SignalR hub</a>
+      </div>
+    </div>
+    <!-- Frontend Sidebar -->
+    <div id="sidebar-frontend" style="display:none">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Setup</div>
+        <a class="sidebar-link" onclick="scrollTo('f1')">Vite config</a>
+        <a class="sidebar-link" onclick="scrollTo('f2')">API client</a>
+        <a class="sidebar-link" onclick="scrollTo('f3')">SignalR hook</a>
+        <a class="sidebar-link" onclick="scrollTo('f4')">Zustand store</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Pages</div>
+        <a class="sidebar-link" onclick="scrollTo('f5')">Page 1: Scraper</a>
+        <a class="sidebar-link" onclick="scrollTo('f6')">Analytics cards</a>
+        <a class="sidebar-link" onclick="scrollTo('f7')">Job form modal</a>
+        <a class="sidebar-link" onclick="scrollTo('f8')">Page 2: Viewer</a>
+        <a class="sidebar-link" onclick="scrollTo('f9')">Result modal</a>
+      </div>
+    </div>
+    <!-- Deploy Sidebar -->
+    <div id="sidebar-deploy" style="display:none">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Deploy</div>
+        <a class="sidebar-link" onclick="scrollTo('d1')">Dockerfiles</a>
+        <a class="sidebar-link" onclick="scrollTo('d2')">railway.toml</a>
+        <a class="sidebar-link" onclick="scrollTo('d3')">Env variables</a>
+        <a class="sidebar-link" onclick="scrollTo('d4')">Push & launch</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- ============================================================ -->
+    <!-- TAB: GUIDE -->
+    <!-- ============================================================ -->
+    <div class="tab-content active" id="tab-guide">
+
+      <!-- SECTION 0 -->
+      <div class="section" id="s0">
+        <div class="section-header">
+          <span class="step-badge">00</span>
+          <span class="section-title">Architecture plan</span>
+        </div>
+        <p>WebScrape is a C# .NET 10 SaaS application built with Clean Architecture. It has two pages: a Scraper page to manage and schedule scrape jobs, and a Viewer page to browse and download results. Jobs are processed asynchronously via Hangfire, and the UI updates in real-time via SignalR.</p>
+        <div class="callout">
+          <strong>Tech stack:</strong> ASP.NET Core 10 · EF Core · Hangfire · AngleSharp · PuppeteerSharp · PostgreSQL · React 18 · TypeScript · Vite · shadcn/ui · TanStack Query · TanStack Table · SignalR · Railway
+        </div>
+        <table>
+          <tr><th>Layer</th><th>Project</th><th>Responsibility</th></tr>
+          <tr><td>Domain</td><td>WebScrape.Domain</td><td>Entities, enums, interfaces — zero dependencies</td></tr>
+          <tr><td>Application</td><td>WebScrape.Application</td><td>Use cases, DTOs, MediatR handlers, validators</td></tr>
+          <tr><td>Infrastructure</td><td>WebScrape.Infrastructure</td><td>EF Core, Hangfire, scraper services, S3</td></tr>
+          <tr><td>API</td><td>WebScrape.API</td><td>Controllers, SignalR hub, middleware, Program.cs</td></tr>
+          <tr><td>Frontend</td><td>webscrape-web</td><td>React + TypeScript + Vite SPA</td></tr>
+        </table>
+      </div>
+
+      <!-- SECTION 1 -->
+      <div class="section" id="s1">
+        <div class="section-header">
+          <span class="step-badge">01</span>
+          <span class="section-title">File structure</span>
+        </div>
+        <p>This is the complete folder and file layout for the entire project before writing any code.</p>
+        <div class="filetree">
+<div class="ft-dir">WebScrape/</div>
+<div class="ft-indent"><span class="ft-dir">WebScrape.sln</span></div>
+<div class="ft-indent"><span class="ft-dir">WebScrape.Domain/</span></div>
+<div class="ft-indent2"><span class="ft-dir">Entities/</span></div>
+<div class="ft-indent3"><span class="ft-file">ScrapeJob.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">ScrapeResult.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">User.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">Enums/</span></div>
+<div class="ft-indent3"><span class="ft-file">ScheduleType.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">JobStatus.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">Interfaces/</span></div>
+<div class="ft-indent3"><span class="ft-file">IScrapeJobRepository.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">IScrapeResultRepository.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">IScraperService.cs</span></div>
+<div class="ft-indent"><span class="ft-dir">WebScrape.Application/</span></div>
+<div class="ft-indent2"><span class="ft-dir">DTOs/</span></div>
+<div class="ft-indent3"><span class="ft-file">CreateScrapeJobDto.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">ScrapeJobDto.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">ScrapeResultDto.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">AnalyticsDto.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">UseCases/</span></div>
+<div class="ft-indent3"><span class="ft-file">CreateScrapeJobUseCase.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">GetAnalyticsUseCase.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">DeleteScrapeJobUseCase.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">GetScrapeResultsUseCase.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">Validators/</span></div>
+<div class="ft-indent3"><span class="ft-file">CreateScrapeJobValidator.cs</span></div>
+<div class="ft-indent"><span class="ft-dir">WebScrape.Infrastructure/</span></div>
+<div class="ft-indent2"><span class="ft-dir">Data/</span></div>
+<div class="ft-indent3"><span class="ft-file">AppDbContext.cs</span></div>
+<div class="ft-indent3"><span class="ft-dir">Repositories/</span></div>
+<div class="ft-indent4"><span class="ft-file">ScrapeJobRepository.cs</span></div>
+<div class="ft-indent4"><span class="ft-file">ScrapeResultRepository.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">Scraping/</span></div>
+<div class="ft-indent3"><span class="ft-file">ScraperService.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">HangfireJobService.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">Caching/</span></div>
+<div class="ft-indent3"><span class="ft-file">CacheService.cs</span></div>
+<div class="ft-indent2"><span class="ft-file">InfrastructureServiceExtensions.cs</span></div>
+<div class="ft-indent"><span class="ft-dir">WebScrape.API/</span></div>
+<div class="ft-indent2"><span class="ft-dir">Controllers/</span></div>
+<div class="ft-indent3"><span class="ft-file">JobsController.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">ResultsController.cs</span></div>
+<div class="ft-indent3"><span class="ft-file">AnalyticsController.cs</span></div>
+<div class="ft-indent2"><span class="ft-dir">Hubs/</span></div>
+<div class="ft-indent3"><span class="ft-file">ScrapeHub.cs</span></div>
+<div class="ft-indent2"><span class="ft-file">Program.cs</span></div>
+<div class="ft-indent2"><span class="ft-file">appsettings.json</span></div>
+<div class="ft-indent2"><span class="ft-file">Dockerfile</span></div>
+<div class="ft-indent"><span class="ft-dir">webscrape-web/</span></div>
+<div class="ft-indent2"><span class="ft-dir">src/</span></div>
+<div class="ft-indent3"><span class="ft-dir">api/</span><span class="ft-comment">  ← axios client + type definitions</span></div>
+<div class="ft-indent3"><span class="ft-dir">components/</span><span class="ft-comment">  ← shared UI components</span></div>
+<div class="ft-indent3"><span class="ft-dir">hooks/</span><span class="ft-comment">  ← TanStack Query hooks + SignalR</span></div>
+<div class="ft-indent3"><span class="ft-dir">pages/</span></div>
+<div class="ft-indent4"><span class="ft-file">ScraperPage.tsx</span></div>
+<div class="ft-indent4"><span class="ft-file">ViewerPage.tsx</span></div>
+<div class="ft-indent3"><span class="ft-dir">store/</span><span class="ft-comment">  ← Zustand state</span></div>
+<div class="ft-indent3"><span class="ft-file">App.tsx</span></div>
+<div class="ft-indent3"><span class="ft-file">main.tsx</span></div>
+<div class="ft-indent2"><span class="ft-file">Dockerfile</span></div>
+<div class="ft-indent2"><span class="ft-file">vite.config.ts</span></div>
+<div><span class="ft-file">railway.toml</span></div>
+<div><span class="ft-file">docker-compose.yml</span></div>
+        </div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="section" id="s2">
+        <div class="section-header">
+          <span class="step-badge">02</span>
+          <span class="section-title">Create the .NET solution</span>
+        </div>
+        <p>Run these commands to scaffold the entire .NET solution with all four projects and wire up project references.</p>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">bash</span><span class="code-file">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cm"># 1. Create root folder and solution</span>
+mkdir WebScrape && cd WebScrape
+dotnet new sln -n WebScrape
+
+<span class="cm"># 2. Create all four class library / web projects</span>
+dotnet new classlib -n WebScrape.Domain -f net10.0
+dotnet new classlib -n WebScrape.Application -f net10.0
+dotnet new classlib -n WebScrape.Infrastructure -f net10.0
+dotnet new webapi -n WebScrape.API -f net10.0
+
+<span class="cm"># 3. Add all projects to solution</span>
+dotnet sln add WebScrape.Domain/WebScrape.Domain.csproj
+dotnet sln add WebScrape.Application/WebScrape.Application.csproj
+dotnet sln add WebScrape.Infrastructure/WebScrape.Infrastructure.csproj
+dotnet sln add WebScrape.API/WebScrape.API.csproj
+
+<span class="cm"># 4. Wire up project references (Clean Architecture dependency flow)</span>
+dotnet add WebScrape.Application/WebScrape.Application.csproj reference WebScrape.Domain/WebScrape.Domain.csproj
+dotnet add WebScrape.Infrastructure/WebScrape.Infrastructure.csproj reference WebScrape.Domain/WebScrape.Domain.csproj
+dotnet add WebScrape.Infrastructure/WebScrape.Infrastructure.csproj reference WebScrape.Application/WebScrape.Application.csproj
+dotnet add WebScrape.API/WebScrape.API.csproj reference WebScrape.Application/WebScrape.Application.csproj
+dotnet add WebScrape.API/WebScrape.API.csproj reference WebScrape.Infrastructure/WebScrape.Infrastructure.csproj
+
+<span class="cm"># 5. Install NuGet packages for each project</span>
+cd WebScrape.Application
+dotnet add package FluentValidation
+dotnet add package FluentValidation.DependencyInjectionExtensions
+cd ..
+
+cd WebScrape.Infrastructure
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Hangfire.Core
+dotnet add package Hangfire.AspNetCore
+dotnet add package Hangfire.PostgreSql
+dotnet add package AngleSharp
+dotnet add package PuppeteerSharp
+dotnet add package Microsoft.Extensions.Caching.Memory
+cd ..
+
+cd WebScrape.API
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.AspNetCore.SignalR
+dotnet add package Swashbuckle.AspNetCore
+dotnet add package Microsoft.AspNetCore.Cors
+cd ..</pre>
+        </div>
+        <div class="callout green">
+          <strong>Why these packages?</strong> FluentValidation handles input validation cleanly. Npgsql connects EF Core to PostgreSQL. Hangfire manages background jobs persistently. AngleSharp parses static HTML. PuppeteerSharp handles JavaScript-rendered pages.
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="section" id="s3">
+        <div class="section-header">
+          <span class="step-badge">03</span>
+          <span class="section-title">Domain layer</span>
+        </div>
+        <p>The Domain layer is the innermost layer — it has zero external dependencies. It defines your business entities, enums, and repository interfaces. Nothing in here knows about EF Core, Hangfire, or HTTP.</p>
+        <div class="callout">
+          Create the folder structure first: <code>Entities/</code>, <code>Enums/</code>, <code>Interfaces/</code> inside <code>WebScrape.Domain/</code>
+        </div>
+        <p>See the <strong>Backend Code</strong> tab for all source files in this layer.</p>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="section" id="s4">
+        <div class="section-header">
+          <span class="step-badge">04</span>
+          <span class="section-title">Application layer</span>
+        </div>
+        <p>The Application layer contains all business logic. Use cases orchestrate domain entities using repository interfaces — they never touch EF Core or Hangfire directly. This is what makes the code testable and replaceable.</p>
+        <ul>
+          <li><strong>DTOs</strong> — Data Transfer Objects: what the API sends and receives</li>
+          <li><strong>Use Cases</strong> — One class per feature: CreateScrapeJob, DeleteScrapeJob, GetAnalytics, GetScrapeResults</li>
+          <li><strong>Validators</strong> — FluentValidation rules on every DTO that enters the system</li>
+        </ul>
+        <p>See the <strong>Backend Code</strong> tab for all source files.</p>
+      </div>
+
+      <!-- SECTION 5 -->
+      <div class="section" id="s5">
+        <div class="section-header">
+          <span class="step-badge">05</span>
+          <span class="section-title">Infrastructure layer</span>
+        </div>
+        <p>Infrastructure implements the interfaces defined in Domain. This is where EF Core, Hangfire, and the actual scraping logic live. The key services are:</p>
+        <table>
+          <tr><th>Service</th><th>What it does</th></tr>
+          <tr><td>AppDbContext</td><td>EF Core DbContext with ScrapeJobs and ScrapeResults tables</td></tr>
+          <tr><td>ScrapeJobRepository</td><td>CRUD for scrape jobs, implements IScrapeJobRepository</td></tr>
+          <tr><td>ScrapeResultRepository</td><td>Pagination + download for results</td></tr>
+          <tr><td>ScraperService</td><td>AngleSharp for static sites, PuppeteerSharp for JS-heavy</td></tr>
+          <tr><td>HangfireJobService</td><td>Enqueues one-time jobs, registers recurring cron jobs</td></tr>
+          <tr><td>CacheService</td><td>Wraps IMemoryCache for analytics endpoint</td></tr>
+        </table>
+      </div>
+
+      <!-- SECTION 6 -->
+      <div class="section" id="s6">
+        <div class="section-header">
+          <span class="step-badge">06</span>
+          <span class="section-title">API layer</span>
+        </div>
+        <p>The API layer is the entry point. It wires everything together in <code>Program.cs</code>, exposes REST endpoints via controllers, and pushes real-time updates to the React frontend via SignalR.</p>
+        <table>
+          <tr><th>Endpoint</th><th>Method</th><th>What it does</th></tr>
+          <tr><td>/api/jobs</td><td>GET</td><td>List all scrape jobs for user</td></tr>
+          <tr><td>/api/jobs</td><td>POST</td><td>Create new scrape job (one-time or cron)</td></tr>
+          <tr><td>/api/jobs/{id}</td><td>PUT</td><td>Update scrape job</td></tr>
+          <tr><td>/api/jobs/{id}</td><td>DELETE</td><td>Delete scrape job + cancel Hangfire</td></tr>
+          <tr><td>/api/results</td><td>GET</td><td>Paginated list of all scrape results</td></tr>
+          <tr><td>/api/results/{id}/download</td><td>GET</td><td>Download result as JSON or CSV</td></tr>
+          <tr><td>/api/analytics</td><td>GET</td><td>Cached analytics stats</td></tr>
+          <tr><td>/hubs/scrape</td><td>WS</td><td>SignalR hub for live job status</td></tr>
+        </table>
+      </div>
+
+      <!-- SECTION 7 -->
+      <div class="section" id="s7">
+        <div class="section-header">
+          <span class="step-badge">07</span>
+          <span class="section-title">React + Vite setup</span>
+        </div>
+        <p>Create the frontend alongside the backend. From the root <code>WebScrape/</code> folder:</p>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">bash</span><span class="code-file">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cm"># Create Vite + React + TypeScript project</span>
+npm create vite@latest webscrape-web -- --template react-ts
+cd webscrape-web
+
+<span class="cm"># Install all required packages</span>
+npm install
+
+<span class="cm"># TanStack Query (server state, caching, refetching)</span>
+npm install @tanstack/react-query @tanstack/react-table
+
+<span class="cm"># Axios for HTTP requests</span>
+npm install axios
+
+<span class="cm"># Zustand for lightweight client state</span>
+npm install zustand
+
+<span class="cm"># SignalR client for real-time job status</span>
+npm install @microsoft/signalr
+
+<span class="cm"># shadcn/ui setup</span>
+npm install tailwindcss @tailwindcss/vite
+npm install class-variance-authority clsx tailwind-merge
+npm install lucide-react
+
+<span class="cm"># Date formatting</span>
+npm install date-fns
+
+<span class="cm"># Cron expression validation on frontend</span>
+npm install cronstrue</pre>
+        </div>
+        <div class="callout green">
+          <strong>TanStack Query</strong> handles all server data — loading states, caching, and background refetching automatically. You won't need useEffect for any API calls.
+        </div>
+      </div>
+
+      <!-- SECTION 8 -->
+      <div class="section" id="s8">
+        <div class="section-header">
+          <span class="step-badge">08</span>
+          <span class="section-title">Page 1: Scraper</span>
+        </div>
+        <p>The Scraper page has three sections:</p>
+        <ul>
+          <li><strong>Analytics cards</strong> — Total websites scraped, success rate, next scheduled job, total data collected. Fetched from <code>/api/analytics</code> with 30s cache.</li>
+          <li><strong>Job list</strong> — All scrape jobs with status badges, schedule type, last run time. Inline edit and delete buttons.</li>
+          <li><strong>Create/Edit modal</strong> — Form to enter URL, name, schedule type (one-time or cron expression), and whether to use headless browser for JS-heavy sites.</li>
+        </ul>
+        <div class="callout">
+          When a job is created via the form, it POSTs to <code>/api/jobs</code>. The API use case validates, saves to DB, and enqueues a Hangfire job immediately (one-time) or registers a recurring cron job.
+        </div>
+        <p>See the <strong>Frontend Code</strong> tab for complete source.</p>
+      </div>
+
+      <!-- SECTION 9 -->
+      <div class="section" id="s9">
+        <div class="section-header">
+          <span class="step-badge">09</span>
+          <span class="section-title">Page 2: Viewer</span>
+        </div>
+        <p>The Viewer page shows all scrape results using TanStack Table with server-side pagination. Each row shows datetime, URL, schedule type, status, and action buttons.</p>
+        <ul>
+          <li>Clicking the <strong>View</strong> button opens a modal with the full scraped content rendered in a scrollable JSON/HTML preview</li>
+          <li>The <strong>Download</strong> button is available both in the table row and inside the modal — calls <code>/api/results/{id}/download?format=json</code></li>
+          <li>The table supports column sorting and filtering by date range and status</li>
+        </ul>
+        <p>See the <strong>Frontend Code</strong> tab for complete source.</p>
+      </div>
+
+      <!-- SECTION 10 -->
+      <div class="section" id="s10">
+        <div class="section-header">
+          <span class="step-badge">10</span>
+          <span class="section-title">SignalR real-time updates</span>
+        </div>
+        <p>When Hangfire executes a scrape job, it updates the job status and calls <code>ScrapeHub</code> to push a message to all connected clients. The React frontend uses a custom hook to subscribe to these events and invalidate TanStack Query cache automatically — no polling needed.</p>
+        <div class="callout green">
+          <strong>Flow:</strong> Hangfire runs job → saves result → calls IScrapeHub.JobCompleted() → SignalR pushes to React → TanStack Query invalidates cache → UI refreshes with new result automatically.
+        </div>
+      </div>
+
+      <!-- SECTION 11 -->
+      <div class="section" id="s11">
+        <div class="section-header">
+          <span class="step-badge">11</span>
+          <span class="section-title">Database migrations</span>
+        </div>
+        <p>Run EF Core migrations to create your PostgreSQL schema:</p>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">bash</span><span class="code-file">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cm"># Install EF Core tools globally (only once)</span>
+dotnet tool install --global dotnet-ef
+
+<span class="cm"># From the root WebScrape/ folder</span>
+<span class="cm"># Create the initial migration</span>
+dotnet ef migrations add InitialCreate \
+  --project WebScrape.Infrastructure \
+  --startup-project WebScrape.API
+
+<span class="cm"># Apply migration to database</span>
+dotnet ef database update \
+  --project WebScrape.Infrastructure \
+  --startup-project WebScrape.API
+
+<span class="cm"># To check migration status</span>
+dotnet ef migrations list \
+  --project WebScrape.Infrastructure \
+  --startup-project WebScrape.API</pre>
+        </div>
+        <div class="callout orange">
+          <strong>Important:</strong> Make sure your <code>appsettings.json</code> has the correct PostgreSQL connection string before running migrations. See the Deployment tab for environment variables.
+        </div>
+      </div>
+
+      <!-- SECTION 12 -->
+      <div class="section" id="s12">
+        <div class="section-header">
+          <span class="step-badge">12</span>
+          <span class="section-title">Railway deployment</span>
+        </div>
+        <p>Railway auto-detects Dockerfiles and builds each service. You'll deploy four services: the .NET API, the React frontend, PostgreSQL, and Redis (optional for multi-instance caching).</p>
+        <p>Full Dockerfiles, railway.toml, and deployment commands are in the <strong>Deployment</strong> tab.</p>
+      </div>
+
+    </div><!-- /tab-guide -->
+
+    <!-- ============================================================ -->
+    <!-- TAB: BACKEND -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-backend">
+
+      <!-- DOMAIN ENTITIES -->
+      <div class="section" id="b1">
+        <div class="section-header">
+          <span class="step-badge">Domain</span>
+          <span class="section-title">Entities</span>
+        </div>
+
+        <h3>ScrapeJob.cs</h3>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Entities/ScrapeJob.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Entities</span>;
+
+<span class="kw">public class</span> <span class="cls">ScrapeJob</span>
+{
+    <span class="kw">public</span> <span class="cls">Guid</span> Id { <span class="kw">get</span>; <span class="kw">set</span>; } = Guid.NewGuid();
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public string</span> Url { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public</span> <span class="cls">ScheduleType</span> ScheduleType { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span>? CronExpression { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="cls">JobStatus</span> Status { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="cls">JobStatus</span>.Pending;
+    <span class="kw">public bool</span> UseHeadlessBrowser { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span>? HangfireJobId { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="cls">DateTime</span> CreatedAt { <span class="kw">get</span>; <span class="kw">set</span>; } = DateTime.UtcNow;
+    <span class="kw">public</span> <span class="cls">DateTime</span>? LastRunAt { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="cls">DateTime</span>? NextRunAt { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="cls">ICollection</span>&lt;<span class="cls">ScrapeResult</span>&gt; Results { <span class="kw">get</span>; <span class="kw">set</span>; } = [];
+}</pre>
+        </div>
+
+        <h3>ScrapeResult.cs</h3>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Entities/ScrapeResult.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Entities</span>;
+
+<span class="kw">public class</span> <span class="cls">ScrapeResult</span>
+{
+    <span class="kw">public</span> <span class="cls">Guid</span> Id { <span class="kw">get</span>; <span class="kw">set</span>; } = Guid.NewGuid();
+    <span class="kw">public</span> <span class="cls">Guid</span> ScrapeJobId { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span> RawHtml { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">string</span>.Empty;
+    <span class="kw">public string</span>? ExtractedText { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public long</span> FileSizeBytes { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public bool</span> Success { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public string</span>? ErrorMessage { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="cls">DateTime</span> ScrapedAt { <span class="kw">get</span>; <span class="kw">set</span>; } = DateTime.UtcNow;
+    <span class="kw">public</span> <span class="cls">ScrapeJob</span> ScrapeJob { <span class="kw">get</span>; <span class="kw">set</span>; } = <span class="kw">null</span>!;
+}</pre>
+        </div>
+      </div>
+
+      <!-- ENUMS -->
+      <div class="section" id="b2">
+        <div class="section-header">
+          <span class="step-badge">Domain</span>
+          <span class="section-title">Enums</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Enums/ScheduleType.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Enums</span>;
+<span class="kw">public enum</span> <span class="cls">ScheduleType</span> { OneTime, Recurring }</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Enums/JobStatus.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Enums</span>;
+<span class="kw">public enum</span> <span class="cls">JobStatus</span> { Pending, Running, Completed, Failed }</pre>
+        </div>
+      </div>
+
+      <!-- INTERFACES -->
+      <div class="section" id="b3">
+        <div class="section-header">
+          <span class="step-badge">Domain</span>
+          <span class="section-title">Interfaces</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Interfaces/IScrapeJobRepository.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Interfaces</span>;
+
+<span class="kw">public interface</span> <span class="cls">IScrapeJobRepository</span>
+{
+    <span class="cls">Task</span>&lt;<span class="cls">IEnumerable</span>&lt;<span class="cls">ScrapeJob</span>&gt;&gt; GetAllAsync();
+    <span class="cls">Task</span>&lt;<span class="cls">ScrapeJob</span>?&gt; GetByIdAsync(<span class="cls">Guid</span> id);
+    <span class="cls">Task</span>&lt;<span class="cls">ScrapeJob</span>&gt; CreateAsync(<span class="cls">ScrapeJob</span> job);
+    <span class="cls">Task</span> UpdateAsync(<span class="cls">ScrapeJob</span> job);
+    <span class="cls">Task</span> DeleteAsync(<span class="cls">Guid</span> id);
+    <span class="cls">Task</span>&lt;<span class="kw">int</span>&gt; GetTotalCountAsync();
+    <span class="cls">Task</span>&lt;<span class="kw">int</span>&gt; GetSuccessCountAsync();
+}</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Interfaces/IScrapeResultRepository.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Interfaces</span>;
+
+<span class="kw">public interface</span> <span class="cls">IScrapeResultRepository</span>
+{
+    <span class="cls">Task</span>&lt;(<span class="cls">IEnumerable</span>&lt;<span class="cls">ScrapeResult</span>&gt; Items, <span class="kw">int</span> Total)&gt;
+        GetPagedAsync(<span class="kw">int</span> page, <span class="kw">int</span> pageSize);
+    <span class="cls">Task</span>&lt;<span class="cls">ScrapeResult</span>?&gt; GetByIdAsync(<span class="cls">Guid</span> id);
+    <span class="cls">Task</span>&lt;<span class="cls">ScrapeResult</span>&gt; CreateAsync(<span class="cls">ScrapeResult</span> result);
+    <span class="cls">Task</span>&lt;<span class="kw">long</span>&gt; GetTotalBytesAsync();
+}</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Domain/Interfaces/IScraperService.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">namespace</span> <span class="cls">WebScrape.Domain.Interfaces</span>;
+
+<span class="kw">public record</span> <span class="cls">ScrapeOutput</span>(<span class="kw">bool</span> Success, <span class="kw">string</span> RawHtml,
+    <span class="kw">string</span>? ExtractedText, <span class="kw">string</span>? ErrorMessage);
+
+<span class="kw">public interface</span> <span class="cls">IScraperService</span>
+{
+    <span class="cls">Task</span>&lt;<span class="cls">ScrapeOutput</span>&gt; ScrapeAsync(<span class="kw">string</span> url, <span class="kw">bool</span> useHeadless);
+}</pre>
+        </div>
+      </div>
+
+      <!-- DTOS -->
+      <div class="section" id="b4">
+        <div class="section-header">
+          <span class="step-badge">Application</span>
+          <span class="section-title">DTOs</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/DTOs/CreateScrapeJobDto.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Domain.Enums;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Application.DTOs</span>;
+
+<span class="kw">public record</span> <span class="cls">CreateScrapeJobDto</span>(
+    <span class="kw">string</span> Name,
+    <span class="kw">string</span> Url,
+    <span class="cls">ScheduleType</span> ScheduleType,
+    <span class="kw">string</span>? CronExpression,
+    <span class="kw">bool</span> UseHeadlessBrowser
+);</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/DTOs/ScrapeJobDto.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Domain.Enums;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Application.DTOs</span>;
+
+<span class="kw">public record</span> <span class="cls">ScrapeJobDto</span>(
+    <span class="cls">Guid</span> Id, <span class="kw">string</span> Name, <span class="kw">string</span> Url,
+    <span class="cls">ScheduleType</span> ScheduleType, <span class="kw">string</span>? CronExpression,
+    <span class="cls">JobStatus</span> Status, <span class="kw">bool</span> UseHeadlessBrowser,
+    <span class="cls">DateTime</span> CreatedAt, <span class="cls">DateTime</span>? LastRunAt, <span class="cls">DateTime</span>? NextRunAt
+);</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/DTOs/ScrapeResultDto.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">namespace</span> <span class="cls">WebScrape.Application.DTOs</span>;
+
+<span class="kw">public record</span> <span class="cls">ScrapeResultDto</span>(
+    <span class="cls">Guid</span> Id, <span class="cls">Guid</span> ScrapeJobId, <span class="kw">string</span> JobName, <span class="kw">string</span> Url,
+    <span class="kw">string</span> ScheduleType, <span class="kw">bool</span> Success, <span class="kw">string</span>? ErrorMessage,
+    <span class="kw">long</span> FileSizeBytes, <span class="cls">DateTime</span> ScrapedAt
+);
+
+<span class="kw">public record</span> <span class="cls">ScrapeResultDetailDto</span>(
+    <span class="cls">Guid</span> Id, <span class="kw">string</span> JobName, <span class="kw">string</span> Url,
+    <span class="kw">string</span> RawHtml, <span class="kw">string</span>? ExtractedText,
+    <span class="kw">long</span> FileSizeBytes, <span class="cls">DateTime</span> ScrapedAt
+);
+
+<span class="kw">public record</span> <span class="cls">PagedResultsDto</span>(
+    <span class="cls">IEnumerable</span>&lt;<span class="cls">ScrapeResultDto</span>&gt; Items,
+    <span class="kw">int</span> Total, <span class="kw">int</span> Page, <span class="kw">int</span> PageSize
+);
+
+<span class="kw">public record</span> <span class="cls">AnalyticsDto</span>(
+    <span class="kw">int</span> TotalJobs, <span class="kw">int</span> SuccessfulJobs,
+    <span class="kw">double</span> SuccessRate, <span class="kw">long</span> TotalBytesCollected,
+    <span class="cls">IEnumerable</span>&lt;<span class="cls">ScheduledJobInfo</span>&gt; UpcomingJobs
+);
+
+<span class="kw">public record</span> <span class="cls">ScheduledJobInfo</span>(<span class="kw">string</span> Name, <span class="cls">DateTime</span>? NextRun);</pre>
+        </div>
+      </div>
+
+      <!-- USE CASES -->
+      <div class="section" id="b5">
+        <div class="section-header">
+          <span class="step-badge">Application</span>
+          <span class="section-title">Use cases</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/UseCases/CreateScrapeJobUseCase.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Application.DTOs;
+<span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Application.UseCases</span>;
+
+<span class="kw">public interface</span> <span class="cls">IHangfireJobService</span>
+{
+    <span class="kw">string</span> EnqueueOneTime(<span class="cls">Guid</span> jobId);
+    <span class="kw">string</span> EnqueueRecurring(<span class="cls">Guid</span> jobId, <span class="kw">string</span> cronExpression);
+    <span class="kw">void</span> CancelJob(<span class="kw">string</span> hangfireJobId, <span class="kw">bool</span> isRecurring);
+}
+
+<span class="kw">public class</span> <span class="cls">CreateScrapeJobUseCase</span>(<span class="cls">IScrapeJobRepository</span> repo, <span class="cls">IHangfireJobService</span> hangfire)
+{
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeJobDto</span>&gt; ExecuteAsync(<span class="cls">CreateScrapeJobDto</span> dto)
+    {
+        <span class="kw">var</span> job = <span class="kw">new</span> <span class="cls">ScrapeJob</span>
+        {
+            Name = dto.Name, Url = dto.Url,
+            ScheduleType = dto.ScheduleType,
+            CronExpression = dto.CronExpression,
+            UseHeadlessBrowser = dto.UseHeadlessBrowser
+        };
+
+        <span class="kw">await</span> repo.CreateAsync(job);
+
+        job.HangfireJobId = dto.ScheduleType == <span class="cls">ScheduleType</span>.OneTime
+            ? hangfire.EnqueueOneTime(job.Id)
+            : hangfire.EnqueueRecurring(job.Id, dto.CronExpression!);
+
+        <span class="kw">await</span> repo.UpdateAsync(job);
+        <span class="kw">return</span> MapToDto(job);
+    }
+
+    <span class="kw">private static</span> <span class="cls">ScrapeJobDto</span> MapToDto(<span class="cls">ScrapeJob</span> j) =>
+        <span class="kw">new</span>(j.Id, j.Name, j.Url, j.ScheduleType, j.CronExpression,
+            j.Status, j.UseHeadlessBrowser, j.CreatedAt, j.LastRunAt, j.NextRunAt);
+}</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/UseCases/GetAnalyticsUseCase.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Application.DTOs;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Application.UseCases</span>;
+
+<span class="kw">public class</span> <span class="cls">GetAnalyticsUseCase</span>(<span class="cls">IScrapeJobRepository</span> jobRepo,
+    <span class="cls">IScrapeResultRepository</span> resultRepo)
+{
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">AnalyticsDto</span>&gt; ExecuteAsync()
+    {
+        <span class="kw">var</span> total = <span class="kw">await</span> jobRepo.GetTotalCountAsync();
+        <span class="kw">var</span> success = <span class="kw">await</span> jobRepo.GetSuccessCountAsync();
+        <span class="kw">var</span> bytes = <span class="kw">await</span> resultRepo.GetTotalBytesAsync();
+        <span class="kw">var</span> jobs = <span class="kw">await</span> jobRepo.GetAllAsync();
+
+        <span class="kw">var</span> upcoming = jobs
+            .Where(j => j.NextRunAt != <span class="kw">null</span>)
+            .OrderBy(j => j.NextRunAt)
+            .Take(<span class="num">5</span>)
+            .Select(j => <span class="kw">new</span> <span class="cls">ScheduledJobInfo</span>(j.Name, j.NextRunAt));
+
+        <span class="kw">return new</span> <span class="cls">AnalyticsDto</span>(total, success,
+            total > <span class="num">0</span> ? Math.Round((<span class="kw">double</span>)success / total * <span class="num">100</span>, <span class="num">1</span>) : <span class="num">0</span>,
+            bytes, upcoming);
+    }
+}</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/UseCases/GetScrapeResultsUseCase.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> WebScrape.Application.DTOs;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Application.UseCases</span>;
+
+<span class="kw">public class</span> <span class="cls">GetScrapeResultsUseCase</span>(<span class="cls">IScrapeResultRepository</span> repo)
+{
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">PagedResultsDto</span>&gt; ExecuteAsync(<span class="kw">int</span> page, <span class="kw">int</span> pageSize)
+    {
+        <span class="kw">var</span> (items, total) = <span class="kw">await</span> repo.GetPagedAsync(page, pageSize);
+        <span class="kw">var</span> dtos = items.Select(r => <span class="kw">new</span> <span class="cls">ScrapeResultDto</span>(
+            r.Id, r.ScrapeJobId, r.ScrapeJob.Name, r.ScrapeJob.Url,
+            r.ScrapeJob.ScheduleType.ToString(), r.Success,
+            r.ErrorMessage, r.FileSizeBytes, r.ScrapedAt));
+        <span class="kw">return new</span> <span class="cls">PagedResultsDto</span>(dtos, total, page, pageSize);
+    }
+}</pre>
+        </div>
+      </div>
+
+      <!-- VALIDATOR -->
+      <div class="section" id="b6">
+        <div class="section-header">
+          <span class="step-badge">Application</span>
+          <span class="section-title">Validators</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Application/Validators/CreateScrapeJobValidator.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> FluentValidation;
+<span class="kw">using</span> WebScrape.Application.DTOs;
+<span class="kw">using</span> WebScrape.Domain.Enums;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Application.Validators</span>;
+
+<span class="kw">public class</span> <span class="cls">CreateScrapeJobValidator</span> : <span class="cls">AbstractValidator</span>&lt;<span class="cls">CreateScrapeJobDto</span>&gt;
+{
+    <span class="kw">public</span> <span class="fn">CreateScrapeJobValidator</span>()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(<span class="num">200</span>);
+        RuleFor(x => x.Url).NotEmpty().Must(BeValidUrl)
+            .WithMessage(<span class="str">"Must be a valid URL starting with http:// or https://"</span>);
+        RuleFor(x => x.CronExpression)
+            .NotEmpty().When(x => x.ScheduleType == <span class="cls">ScheduleType</span>.Recurring)
+            .WithMessage(<span class="str">"Cron expression required for recurring jobs"</span>);
+    }
+
+    <span class="kw">private static bool</span> <span class="fn">BeValidUrl</span>(<span class="kw">string</span> url) =>
+        Uri.TryCreate(url, UriKind.Absolute, <span class="kw">out var</span> u) &&
+        (u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
+}</pre>
+        </div>
+      </div>
+
+      <!-- DBCONTEXT -->
+      <div class="section" id="b7">
+        <div class="section-header">
+          <span class="step-badge">Infrastructure</span>
+          <span class="section-title">DbContext</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Infrastructure/Data/AppDbContext.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> Microsoft.EntityFrameworkCore;
+<span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Infrastructure.Data</span>;
+
+<span class="kw">public class</span> <span class="cls">AppDbContext</span>(<span class="cls">DbContextOptions</span>&lt;<span class="cls">AppDbContext</span>&gt; options) : <span class="cls">DbContext</span>(options)
+{
+    <span class="kw">public</span> <span class="cls">DbSet</span>&lt;<span class="cls">ScrapeJob</span>&gt; ScrapeJobs => Set&lt;<span class="cls">ScrapeJob</span>&gt;();
+    <span class="kw">public</span> <span class="cls">DbSet</span>&lt;<span class="cls">ScrapeResult</span>&gt; ScrapeResults => Set&lt;<span class="cls">ScrapeResult</span>&gt;();
+
+    <span class="kw">protected override void</span> <span class="fn">OnModelCreating</span>(<span class="cls">ModelBuilder</span> mb)
+    {
+        mb.Entity&lt;<span class="cls">ScrapeJob</span>&gt;(e => {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).IsRequired().HasMaxLength(<span class="num">200</span>);
+            e.Property(x => x.Url).IsRequired();
+            e.Property(x => x.ScheduleType).HasConversion&lt;<span class="kw">string</span>&gt;();
+            e.Property(x => x.Status).HasConversion&lt;<span class="kw">string</span>&gt;();
+            e.HasMany(x => x.Results).WithOne(x => x.ScrapeJob)
+                .HasForeignKey(x => x.ScrapeJobId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        mb.Entity&lt;<span class="cls">ScrapeResult</span>&gt;(e => {
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.ScrapedAt);
+            e.HasIndex(x => x.ScrapeJobId);
+        });
+    }
+}</pre>
+        </div>
+      </div>
+
+      <!-- REPOSITORIES -->
+      <div class="section" id="b8">
+        <div class="section-header">
+          <span class="step-badge">Infrastructure</span>
+          <span class="section-title">Repositories</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Infrastructure/Data/Repositories/ScrapeJobRepository.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> Microsoft.EntityFrameworkCore;
+<span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Infrastructure.Data.Repositories</span>;
+
+<span class="kw">public class</span> <span class="cls">ScrapeJobRepository</span>(<span class="cls">AppDbContext</span> db) : <span class="cls">IScrapeJobRepository</span>
+{
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IEnumerable</span>&lt;<span class="cls">ScrapeJob</span>&gt;&gt; <span class="fn">GetAllAsync</span>() =>
+        <span class="kw">await</span> db.ScrapeJobs.OrderByDescending(j => j.CreatedAt).ToListAsync();
+
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeJob</span>?&gt; <span class="fn">GetByIdAsync</span>(<span class="cls">Guid</span> id) =>
+        <span class="kw">await</span> db.ScrapeJobs.FindAsync(id);
+
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeJob</span>&gt; <span class="fn">CreateAsync</span>(<span class="cls">ScrapeJob</span> job)
+    {
+        db.ScrapeJobs.Add(job);
+        <span class="kw">await</span> db.SaveChangesAsync();
+        <span class="kw">return</span> job;
+    }
+
+    <span class="kw">public async</span> <span class="cls">Task</span> <span class="fn">UpdateAsync</span>(<span class="cls">ScrapeJob</span> job)
+    {
+        db.ScrapeJobs.Update(job);
+        <span class="kw">await</span> db.SaveChangesAsync();
+    }
+
+    <span class="kw">public async</span> <span class="cls">Task</span> <span class="fn">DeleteAsync</span>(<span class="cls">Guid</span> id)
+    {
+        <span class="kw">var</span> job = <span class="kw">await</span> db.ScrapeJobs.FindAsync(id);
+        <span class="kw">if</span> (job != <span class="kw">null</span>) { db.ScrapeJobs.Remove(job); <span class="kw">await</span> db.SaveChangesAsync(); }
+    }
+
+    <span class="kw">public</span> <span class="cls">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">GetTotalCountAsync</span>() => db.ScrapeJobs.CountAsync();
+
+    <span class="kw">public</span> <span class="cls">Task</span>&lt;<span class="kw">int</span>&gt; <span class="fn">GetSuccessCountAsync</span>() =>
+        db.ScrapeJobs.CountAsync(j => j.Status == <span class="cls">JobStatus</span>.Completed);
+}</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Infrastructure/Data/Repositories/ScrapeResultRepository.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> Microsoft.EntityFrameworkCore;
+<span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Infrastructure.Data.Repositories</span>;
+
+<span class="kw">public class</span> <span class="cls">ScrapeResultRepository</span>(<span class="cls">AppDbContext</span> db) : <span class="cls">IScrapeResultRepository</span>
+{
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;(<span class="cls">IEnumerable</span>&lt;<span class="cls">ScrapeResult</span>&gt;, <span class="kw">int</span>)&gt; <span class="fn">GetPagedAsync</span>(<span class="kw">int</span> page, <span class="kw">int</span> pageSize)
+    {
+        <span class="kw">var</span> query = db.ScrapeResults.Include(r => r.ScrapeJob)
+            .OrderByDescending(r => r.ScrapedAt);
+        <span class="kw">var</span> total = <span class="kw">await</span> query.CountAsync();
+        <span class="kw">var</span> items = <span class="kw">await</span> query.Skip((page - <span class="num">1</span>) * pageSize).Take(pageSize).ToListAsync();
+        <span class="kw">return</span> (items, total);
+    }
+
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeResult</span>?&gt; <span class="fn">GetByIdAsync</span>(<span class="cls">Guid</span> id) =>
+        <span class="kw">await</span> db.ScrapeResults.Include(r => r.ScrapeJob).FirstOrDefaultAsync(r => r.Id == id);
+
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeResult</span>&gt; <span class="fn">CreateAsync</span>(<span class="cls">ScrapeResult</span> result)
+    {
+        db.ScrapeResults.Add(result);
+        <span class="kw">await</span> db.SaveChangesAsync();
+        <span class="kw">return</span> result;
+    }
+
+    <span class="kw">public</span> <span class="cls">Task</span>&lt;<span class="kw">long</span>&gt; <span class="fn">GetTotalBytesAsync</span>() =>
+        db.ScrapeResults.SumAsync(r => r.FileSizeBytes);
+}</pre>
+        </div>
+      </div>
+
+      <!-- SCRAPER -->
+      <div class="section" id="b9">
+        <div class="section-header">
+          <span class="step-badge">Infrastructure</span>
+          <span class="section-title">Scraper service</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Infrastructure/Scraping/ScraperService.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> AngleSharp;
+<span class="kw">using</span> PuppeteerSharp;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Infrastructure.Scraping</span>;
+
+<span class="kw">public class</span> <span class="cls">ScraperService</span> : <span class="cls">IScraperService</span>
+{
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeOutput</span>&gt; <span class="fn">ScrapeAsync</span>(<span class="kw">string</span> url, <span class="kw">bool</span> useHeadless)
+    {
+        <span class="kw">try</span>
+        {
+            <span class="kw">return</span> useHeadless
+                ? <span class="kw">await</span> <span class="fn">ScrapeWithPuppeteerAsync</span>(url)
+                : <span class="kw">await</span> <span class="fn">ScrapeWithAngleSharpAsync</span>(url);
+        }
+        <span class="kw">catch</span> (<span class="cls">Exception</span> ex)
+        {
+            <span class="kw">return new</span> <span class="cls">ScrapeOutput</span>(<span class="kw">false</span>, <span class="kw">string</span>.Empty, <span class="kw">null</span>, ex.Message);
+        }
+    }
+
+    <span class="kw">private static async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeOutput</span>&gt; <span class="fn">ScrapeWithAngleSharpAsync</span>(<span class="kw">string</span> url)
+    {
+        <span class="kw">using var</span> http = <span class="kw">new</span> <span class="cls">HttpClient</span>();
+        http.DefaultRequestHeaders.Add(<span class="str">"User-Agent"</span>,
+            <span class="str">"Mozilla/5.0 (compatible; WebScrapeBot/1.0)"</span>);
+
+        <span class="kw">var</span> html = <span class="kw">await</span> http.GetStringAsync(url);
+        <span class="kw">var</span> config = <span class="cls">Configuration</span>.Default;
+        <span class="kw">var</span> context = <span class="cls">BrowsingContext</span>.New(config);
+        <span class="kw">var</span> doc = <span class="kw">await</span> context.OpenAsync(req => req.Content(html));
+
+        <span class="kw">var</span> text = doc.Body?.TextContent?.Trim() ?? <span class="kw">string</span>.Empty;
+        <span class="kw">return new</span> <span class="cls">ScrapeOutput</span>(<span class="kw">true</span>, html, text, <span class="kw">null</span>);
+    }
+
+    <span class="kw">private static async</span> <span class="cls">Task</span>&lt;<span class="cls">ScrapeOutput</span>&gt; <span class="fn">ScrapeWithPuppeteerAsync</span>(<span class="kw">string</span> url)
+    {
+        <span class="kw">await new</span> <span class="cls">BrowserFetcher</span>().DownloadAsync();
+        <span class="kw">await using var</span> browser = <span class="kw">await</span> <span class="cls">Puppeteer</span>.LaunchAsync(<span class="kw">new</span> <span class="cls">LaunchOptions</span>
+        {
+            Headless = <span class="kw">true</span>,
+            Args = [<span class="str">"--no-sandbox"</span>, <span class="str">"--disable-setuid-sandbox"</span>]
+        });
+        <span class="kw">await using var</span> page = <span class="kw">await</span> browser.NewPageAsync();
+        <span class="kw">await</span> page.GoToAsync(url, <span class="cls">WaitUntilNavigation</span>.NetworkIdle0);
+        <span class="kw">var</span> html = <span class="kw">await</span> page.GetContentAsync();
+        <span class="kw">var</span> text = <span class="kw">await</span> page.EvaluateExpressionAsync&lt;<span class="kw">string</span>&gt;(<span class="str">"document.body.innerText"</span>);
+        <span class="kw">return new</span> <span class="cls">ScrapeOutput</span>(<span class="kw">true</span>, html, text, <span class="kw">null</span>);
+    }
+}</pre>
+        </div>
+      </div>
+
+      <!-- HANGFIRE -->
+      <div class="section" id="b10">
+        <div class="section-header">
+          <span class="step-badge">Infrastructure</span>
+          <span class="section-title">Hangfire job service</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.Infrastructure/Scraping/HangfireJobService.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> Hangfire;
+<span class="kw">using</span> Microsoft.AspNetCore.SignalR.Client;
+<span class="kw">using</span> WebScrape.Application.UseCases;
+<span class="kw">using</span> WebScrape.Domain.Entities;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.Infrastructure.Scraping</span>;
+
+<span class="kw">public class</span> <span class="cls">HangfireJobService</span>(<span class="cls">IScrapeJobRepository</span> jobRepo,
+    <span class="cls">IScrapeResultRepository</span> resultRepo, <span class="cls">IScraperService</span> scraper,
+    <span class="cls">IHubContext</span>&lt;<span class="cls">ScrapeHub</span>&gt; hub) : <span class="cls">IHangfireJobService</span>
+{
+    <span class="kw">public string</span> <span class="fn">EnqueueOneTime</span>(<span class="cls">Guid</span> jobId) =>
+        BackgroundJob.Enqueue(() => <span class="fn">ExecuteScrapeAsync</span>(jobId));
+
+    <span class="kw">public string</span> <span class="fn">EnqueueRecurring</span>(<span class="cls">Guid</span> jobId, <span class="kw">string</span> cronExpression)
+    {
+        <span class="kw">var</span> recurringId = $<span class="str">"scrape-{jobId}"</span>;
+        RecurringJob.AddOrUpdate(recurringId, () => <span class="fn">ExecuteScrapeAsync</span>(jobId), cronExpression);
+        <span class="kw">return</span> recurringId;
+    }
+
+    <span class="kw">public void</span> <span class="fn">CancelJob</span>(<span class="kw">string</span> hangfireJobId, <span class="kw">bool</span> isRecurring)
+    {
+        <span class="kw">if</span> (isRecurring) RecurringJob.RemoveIfExists(hangfireJobId);
+        <span class="kw">else</span> BackgroundJob.Delete(hangfireJobId);
+    }
+
+    <span class="attr">[AutomaticRetry(Attempts = 3)]</span>
+    <span class="kw">public async</span> <span class="cls">Task</span> <span class="fn">ExecuteScrapeAsync</span>(<span class="cls">Guid</span> jobId)
+    {
+        <span class="kw">var</span> job = <span class="kw">await</span> jobRepo.GetByIdAsync(jobId);
+        <span class="kw">if</span> (job == <span class="kw">null</span>) <span class="kw">return</span>;
+
+        job.Status = <span class="cls">JobStatus</span>.Running;
+        job.LastRunAt = DateTime.UtcNow;
+        <span class="kw">await</span> jobRepo.UpdateAsync(job);
+        <span class="kw">await</span> hub.Clients.All.SendAsync(<span class="str">"JobStatusChanged"</span>, job.Id, <span class="str">"Running"</span>);
+
+        <span class="kw">var</span> output = <span class="kw">await</span> scraper.ScrapeAsync(job.Url, job.UseHeadlessBrowser);
+
+        <span class="kw">var</span> result = <span class="kw">new</span> <span class="cls">ScrapeResult</span>
+        {
+            ScrapeJobId = job.Id,
+            RawHtml = output.RawHtml,
+            ExtractedText = output.ExtractedText,
+            FileSizeBytes = System.Text.Encoding.UTF8.GetByteCount(output.RawHtml),
+            Success = output.Success,
+            ErrorMessage = output.ErrorMessage
+        };
+
+        <span class="kw">await</span> resultRepo.CreateAsync(result);
+
+        job.Status = output.Success ? <span class="cls">JobStatus</span>.Completed : <span class="cls">JobStatus</span>.Failed;
+        job.NextRunAt = job.ScheduleType == <span class="cls">ScheduleType</span>.Recurring
+            ? <span class="cls">CronExpressionHelper</span>.GetNextOccurrence(job.CronExpression!) : <span class="kw">null</span>;
+        <span class="kw">await</span> jobRepo.UpdateAsync(job);
+
+        <span class="kw">await</span> hub.Clients.All.SendAsync(<span class="str">"JobCompleted"</span>, job.Id,
+            job.Status.ToString(), result.Id);
+    }
+}</pre>
+        </div>
+      </div>
+
+      <!-- CONTROLLERS -->
+      <div class="section" id="b11">
+        <div class="section-header">
+          <span class="step-badge">API</span>
+          <span class="section-title">Controllers</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.API/Controllers/JobsController.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> FluentValidation;
+<span class="kw">using</span> Microsoft.AspNetCore.Mvc;
+<span class="kw">using</span> WebScrape.Application.DTOs;
+<span class="kw">using</span> WebScrape.Application.UseCases;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+<span class="kw">namespace</span> <span class="cls">WebScrape.API.Controllers</span>;
+
+[<span class="cls">ApiController</span>, Route(<span class="str">"api/[controller]"</span>)]
+<span class="kw">public class</span> <span class="cls">JobsController</span>(<span class="cls">IScrapeJobRepository</span> repo,
+    <span class="cls">CreateScrapeJobUseCase</span> createUseCase,
+    <span class="cls">DeleteScrapeJobUseCase</span> deleteUseCase,
+    <span class="cls">IValidator</span>&lt;<span class="cls">CreateScrapeJobDto</span>&gt; validator) : <span class="cls">ControllerBase</span>
+{
+    [<span class="cls">HttpGet</span>]
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">GetAll</span>()
+    {
+        <span class="kw">var</span> jobs = <span class="kw">await</span> repo.GetAllAsync();
+        <span class="kw">return</span> Ok(jobs.Select(j => <span class="kw">new</span> <span class="cls">ScrapeJobDto</span>(
+            j.Id, j.Name, j.Url, j.ScheduleType, j.CronExpression,
+            j.Status, j.UseHeadlessBrowser, j.CreatedAt, j.LastRunAt, j.NextRunAt)));
+    }
+
+    [<span class="cls">HttpPost</span>]
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">Create</span>([<span class="cls">FromBody</span>] <span class="cls">CreateScrapeJobDto</span> dto)
+    {
+        <span class="kw">var</span> validation = <span class="kw">await</span> validator.ValidateAsync(dto);
+        <span class="kw">if</span> (!validation.IsValid) <span class="kw">return</span> BadRequest(validation.Errors);
+        <span class="kw">var</span> result = <span class="kw">await</span> createUseCase.ExecuteAsync(dto);
+        <span class="kw">return</span> CreatedAtAction(<span class="kw">nameof</span>(GetAll), result);
+    }
+
+    [<span class="cls">HttpDelete</span>(<span class="str">"{id}"</span>)]
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">Delete</span>(<span class="cls">Guid</span> id)
+    {
+        <span class="kw">await</span> deleteUseCase.ExecuteAsync(id);
+        <span class="kw">return</span> NoContent();
+    }
+}</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.API/Controllers/ResultsController.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>[<span class="cls">ApiController</span>, Route(<span class="str">"api/[controller]"</span>)]
+<span class="kw">public class</span> <span class="cls">ResultsController</span>(<span class="cls">GetScrapeResultsUseCase</span> getUseCase,
+    <span class="cls">IScrapeResultRepository</span> repo) : <span class="cls">ControllerBase</span>
+{
+    [<span class="cls">HttpGet</span>]
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">GetPaged</span>(<span class="kw">int</span> page = <span class="num">1</span>, <span class="kw">int</span> pageSize = <span class="num">20</span>) =>
+        Ok(<span class="kw">await</span> getUseCase.ExecuteAsync(page, pageSize));
+
+    [<span class="cls">HttpGet</span>(<span class="str">"{id}"</span>)]
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">GetById</span>(<span class="cls">Guid</span> id)
+    {
+        <span class="kw">var</span> r = <span class="kw">await</span> repo.GetByIdAsync(id);
+        <span class="kw">if</span> (r == <span class="kw">null</span>) <span class="kw">return</span> NotFound();
+        <span class="kw">return</span> Ok(<span class="kw">new</span> <span class="cls">ScrapeResultDetailDto</span>(r.Id, r.ScrapeJob.Name, r.ScrapeJob.Url,
+            r.RawHtml, r.ExtractedText, r.FileSizeBytes, r.ScrapedAt));
+    }
+
+    [<span class="cls">HttpGet</span>(<span class="str">"{id}/download"</span>)]
+    <span class="kw">public async</span> <span class="cls">Task</span>&lt;<span class="cls">IActionResult</span>&gt; <span class="fn">Download</span>(<span class="cls">Guid</span> id, <span class="kw">string</span> format = <span class="str">"json"</span>)
+    {
+        <span class="kw">var</span> r = <span class="kw">await</span> repo.GetByIdAsync(id);
+        <span class="kw">if</span> (r == <span class="kw">null</span>) <span class="kw">return</span> NotFound();
+        <span class="kw">if</span> (format == <span class="str">"html"</span>)
+            <span class="kw">return</span> File(<span class="cls">System.Text.Encoding.UTF8</span>.GetBytes(r.RawHtml),
+                <span class="str">"text/html"</span>, $<span class="str">"result-{r.Id}.html"</span>);
+        <span class="kw">var</span> json = System.Text.Json.JsonSerializer.Serialize(<span class="kw">new</span> {
+            r.Id, r.ScrapeJob.Url, r.ScrapedAt, r.RawHtml, r.ExtractedText });
+        <span class="kw">return</span> File(<span class="cls">System.Text.Encoding.UTF8</span>.GetBytes(json),
+            <span class="str">"application/json"</span>, $<span class="str">"result-{r.Id}.json"</span>);
+    }
+}</pre>
+        </div>
+      </div>
+
+      <!-- PROGRAM.CS -->
+      <div class="section" id="b12">
+        <div class="section-header">
+          <span class="step-badge">API</span>
+          <span class="section-title">Program.cs</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.API/Program.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> FluentValidation;
+<span class="kw">using</span> Hangfire;
+<span class="kw">using</span> Hangfire.PostgreSql;
+<span class="kw">using</span> Microsoft.EntityFrameworkCore;
+<span class="kw">using</span> WebScrape.API.Hubs;
+<span class="kw">using</span> WebScrape.Application.DTOs;
+<span class="kw">using</span> WebScrape.Application.UseCases;
+<span class="kw">using</span> WebScrape.Application.Validators;
+<span class="kw">using</span> WebScrape.Infrastructure.Data;
+<span class="kw">using</span> WebScrape.Infrastructure.Data.Repositories;
+<span class="kw">using</span> WebScrape.Infrastructure.Scraping;
+<span class="kw">using</span> WebScrape.Domain.Interfaces;
+
+<span class="kw">var</span> builder = WebApplication.CreateBuilder(args);
+<span class="kw">var</span> conn = builder.Configuration.GetConnectionString(<span class="str">"DefaultConnection"</span>)!;
+
+<span class="cm">// Database</span>
+builder.Services.AddDbContext&lt;<span class="cls">AppDbContext</span>&gt;(o => o.UseNpgsql(conn));
+
+<span class="cm">// Hangfire (uses same PostgreSQL DB)</span>
+builder.Services.AddHangfire(cfg => cfg
+    .SetDataCompatibilityLevel(<span class="cls">CompatibilityLevel</span>.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(conn));
+builder.Services.AddHangfireServer();
+
+<span class="cm">// Repositories</span>
+builder.Services.AddScoped&lt;<span class="cls">IScrapeJobRepository</span>, <span class="cls">ScrapeJobRepository</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cls">IScrapeResultRepository</span>, <span class="cls">ScrapeResultRepository</span>&gt;();
+
+<span class="cm">// Services</span>
+builder.Services.AddScoped&lt;<span class="cls">IScraperService</span>, <span class="cls">ScraperService</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cls">IHangfireJobService</span>, <span class="cls">HangfireJobService</span>&gt;();
+
+<span class="cm">// Use Cases</span>
+builder.Services.AddScoped&lt;<span class="cls">CreateScrapeJobUseCase</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cls">DeleteScrapeJobUseCase</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cls">GetAnalyticsUseCase</span>&gt;();
+builder.Services.AddScoped&lt;<span class="cls">GetScrapeResultsUseCase</span>&gt;();
+
+<span class="cm">// Validation</span>
+builder.Services.AddScoped&lt;<span class="cls">IValidator</span>&lt;<span class="cls">CreateScrapeJobDto</span>&gt;, <span class="cls">CreateScrapeJobValidator</span>&gt;();
+
+<span class="cm">// Caching</span>
+builder.Services.AddMemoryCache();
+
+<span class="cm">// SignalR</span>
+builder.Services.AddSignalR();
+
+<span class="cm">// CORS for React frontend</span>
+builder.Services.AddCors(o => o.AddPolicy(<span class="str">"AllowFrontend"</span>, p =>
+    p.WithOrigins(<span class="str">"http://localhost:5173"</span>,
+                  builder.Configuration[<span class="str">"FRONTEND_URL"</span>] ?? <span class="str">""</span>)
+     .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+<span class="kw">var</span> app = builder.Build();
+
+<span class="cm">// Auto-run migrations on startup</span>
+<span class="kw">using</span> (<span class="kw">var</span> scope = app.Services.CreateScope())
+{
+    <span class="kw">var</span> db = scope.ServiceProvider.GetRequiredService&lt;<span class="cls">AppDbContext</span>&gt;();
+    <span class="kw">await</span> db.Database.MigrateAsync();
+}
+
+app.UseSwagger(); app.UseSwaggerUI();
+app.UseCors(<span class="str">"AllowFrontend"</span>);
+app.UseHangfireDashboard(<span class="str">"/hangfire"</span>);
+app.MapControllers();
+app.MapHub&lt;<span class="cls">ScrapeHub</span>&gt;(<span class="str">"/hubs/scrape"</span>);
+app.Run();</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">json</span><span class="code-file">WebScrape.API/appsettings.json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>{
+  <span class="attr">"ConnectionStrings"</span>: {
+    <span class="attr">"DefaultConnection"</span>: <span class="str">"Host=localhost;Database=webscrape;Username=postgres;Password=postgres"</span>
+  },
+  <span class="attr">"AllowedHosts"</span>: <span class="str">"*"</span>,
+  <span class="attr">"Logging"</span>: {
+    <span class="attr">"LogLevel"</span>: { <span class="attr">"Default"</span>: <span class="str">"Information"</span> }
+  }
+}</pre>
+        </div>
+      </div>
+
+      <!-- SIGNALR HUB -->
+      <div class="section" id="b13">
+        <div class="section-header">
+          <span class="step-badge">API</span>
+          <span class="section-title">SignalR hub</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">C#</span><span class="code-file">WebScrape.API/Hubs/ScrapeHub.cs</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">using</span> Microsoft.AspNetCore.SignalR;
+<span class="kw">namespace</span> <span class="cls">WebScrape.API.Hubs</span>;
+
+<span class="kw">public class</span> <span class="cls">ScrapeHub</span> : <span class="cls">Hub</span>
+{
+    <span class="cm">// Clients subscribe to this hub</span>
+    <span class="cm">// Server pushes via IHubContext&lt;ScrapeHub&gt; from HangfireJobService</span>
+    <span class="cm">// Events: "JobStatusChanged", "JobCompleted"</span>
+    <span class="kw">public override async</span> <span class="cls">Task</span> <span class="fn">OnConnectedAsync</span>()
+    {
+        <span class="kw">await</span> Clients.Caller.SendAsync(<span class="str">"Connected"</span>, Context.ConnectionId);
+        <span class="kw">await base</span>.OnConnectedAsync();
+    }
+}</pre>
+        </div>
+      </div>
+
+    </div><!-- /tab-backend -->
+
+    <!-- ============================================================ -->
+    <!-- TAB: FRONTEND -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-frontend">
+
+      <!-- VITE CONFIG -->
+      <div class="section" id="f1">
+        <div class="section-header">
+          <span class="step-badge">Setup</span>
+          <span class="section-title">Vite config + Tailwind</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">typescript</span><span class="code-file">webscrape-web/vite.config.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { defineConfig } <span class="kw">from</span> <span class="str">'vite'</span>
+<span class="kw">import</span> react <span class="kw">from</span> <span class="str">'@vitejs/plugin-react'</span>
+<span class="kw">import</span> tailwindcss <span class="kw">from</span> <span class="str">'@tailwindcss/vite'</span>
+
+<span class="kw">export default</span> defineConfig({
+  plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      <span class="str">'/api'</span>: { target: <span class="str">'http://localhost:5000'</span>, changeOrigin: <span class="kw">true</span> },
+      <span class="str">'/hubs'</span>: { target: <span class="str">'http://localhost:5000'</span>, changeOrigin: <span class="kw">true</span>, ws: <span class="kw">true</span> }
+    }
+  }
+})</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">css</span><span class="code-file">webscrape-web/src/index.css</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="attr">@import</span> <span class="str">"tailwindcss"</span>;
+
+<span class="attr">@import url</span>(<span class="str">'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap'</span>);
+
+<span class="fn">:root</span> {
+  <span class="attr">font-family</span>: <span class="str">'DM Sans'</span>, sans-serif;
+}
+
+<span class="fn">body</span> {
+  <span class="attr">background</span>: <span class="num">#0f1117</span>;
+  <span class="attr">color</span>: <span class="num">#e2e8f0</span>;
+}</pre>
+        </div>
+      </div>
+
+      <!-- API CLIENT -->
+      <div class="section" id="f2">
+        <div class="section-header">
+          <span class="step-badge">Setup</span>
+          <span class="section-title">API client + types</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">typescript</span><span class="code-file">webscrape-web/src/api/client.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>
+
+<span class="kw">export const</span> api = axios.create({
+  baseURL: <span class="str">'/api'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> }
+})
+
+<span class="cm">// Types matching backend DTOs</span>
+<span class="kw">export type</span> ScheduleType = <span class="str">'OneTime'</span> | <span class="str">'Recurring'</span>
+<span class="kw">export type</span> JobStatus = <span class="str">'Pending'</span> | <span class="str">'Running'</span> | <span class="str">'Completed'</span> | <span class="str">'Failed'</span>
+
+<span class="kw">export interface</span> ScrapeJob {
+  id: <span class="kw">string</span>; name: <span class="kw">string</span>; url: <span class="kw">string</span>
+  scheduleType: ScheduleType; cronExpression?: <span class="kw">string</span>
+  status: JobStatus; useHeadlessBrowser: <span class="kw">boolean</span>
+  createdAt: <span class="kw">string</span>; lastRunAt?: <span class="kw">string</span>; nextRunAt?: <span class="kw">string</span>
+}
+
+<span class="kw">export interface</span> ScrapeResult {
+  id: <span class="kw">string</span>; scrapeJobId: <span class="kw">string</span>; jobName: <span class="kw">string</span>; url: <span class="kw">string</span>
+  scheduleType: <span class="kw">string</span>; success: <span class="kw">boolean</span>; errorMessage?: <span class="kw">string</span>
+  fileSizeBytes: <span class="kw">number</span>; scrapedAt: <span class="kw">string</span>
+}
+
+<span class="kw">export interface</span> ScrapeResultDetail extends ScrapeResult {
+  rawHtml: <span class="kw">string</span>; extractedText?: <span class="kw">string</span>
+}
+
+<span class="kw">export interface</span> PagedResults {
+  items: ScrapeResult[]; total: <span class="kw">number</span>; page: <span class="kw">number</span>; pageSize: <span class="kw">number</span>
+}
+
+<span class="kw">export interface</span> Analytics {
+  totalJobs: <span class="kw">number</span>; successfulJobs: <span class="kw">number</span>; successRate: <span class="kw">number</span>
+  totalBytesCollected: <span class="kw">number</span>
+  upcomingJobs: Array&lt;{ name: <span class="kw">string</span>; nextRun: <span class="kw">string</span> }&gt;
+}
+
+<span class="cm">// API functions</span>
+<span class="kw">export const</span> jobsApi = {
+  getAll: () => api.get&lt;ScrapeJob[]&gt;(<span class="str">'/jobs'</span>).then(r => r.data),
+  create: (dto: Omit&lt;ScrapeJob, <span class="str">'id'</span> | <span class="str">'status'</span> | <span class="str">'createdAt'</span> | <span class="str">'lastRunAt'</span> | <span class="str">'nextRunAt'</span>&gt;) =>
+    api.post&lt;ScrapeJob&gt;(<span class="str">'/jobs'</span>, dto).then(r => r.data),
+  update: (id: <span class="kw">string</span>, dto: Partial&lt;ScrapeJob&gt;) =>
+    api.put&lt;ScrapeJob&gt;(`/jobs/${id}`, dto).then(r => r.data),
+  delete: (id: <span class="kw">string</span>) => api.delete(`/jobs/${id}`)
+}
+
+<span class="kw">export const</span> resultsApi = {
+  getPaged: (page: <span class="kw">number</span>, pageSize = <span class="num">20</span>) =>
+    api.get&lt;PagedResults&gt;(`/results?page=${page}&pageSize=${pageSize}`).then(r => r.data),
+  getById: (id: <span class="kw">string</span>) => api.get&lt;ScrapeResultDetail&gt;(`/results/${id}`).then(r => r.data),
+  downloadUrl: (id: <span class="kw">string</span>, format = <span class="str">'json'</span>) => `/api/results/${id}/download?format=${format}`
+}
+
+<span class="kw">export const</span> analyticsApi = {
+  get: () => api.get&lt;Analytics&gt;(<span class="str">'/analytics'</span>).then(r => r.data)
+}</pre>
+        </div>
+      </div>
+
+      <!-- SIGNALR HOOK -->
+      <div class="section" id="f3">
+        <div class="section-header">
+          <span class="step-badge">Setup</span>
+          <span class="section-title">SignalR hook</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">typescript</span><span class="code-file">webscrape-web/src/hooks/useSignalR.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> { HubConnectionBuilder, LogLevel } <span class="kw">from</span> <span class="str">'@microsoft/signalr'</span>
+<span class="kw">import</span> { useQueryClient } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>
+
+<span class="kw">export function</span> useSignalR() {
+  <span class="kw">const</span> queryClient = useQueryClient()
+
+  useEffect(() => {
+    <span class="kw">const</span> conn = <span class="kw">new</span> HubConnectionBuilder()
+      .withUrl(<span class="str">'/hubs/scrape'</span>)
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.Warning)
+      .build()
+
+    conn.on(<span class="str">'JobStatusChanged'</span>, (jobId: <span class="kw">string</span>, status: <span class="kw">string</span>) => {
+      <span class="cm">// Optimistically update job status in cache</span>
+      queryClient.setQueryData([<span class="str">'jobs'</span>], (old: <span class="kw">any</span>[]) =>
+        old?.map(j => j.id === jobId ? { ...j, status } : j) ?? [])
+    })
+
+    conn.on(<span class="str">'JobCompleted'</span>, () => {
+      <span class="cm">// Invalidate both queries to refetch fresh data</span>
+      queryClient.invalidateQueries({ queryKey: [<span class="str">'jobs'</span>] })
+      queryClient.invalidateQueries({ queryKey: [<span class="str">'results'</span>] })
+      queryClient.invalidateQueries({ queryKey: [<span class="str">'analytics'</span>] })
+    })
+
+    conn.start().catch(console.error)
+    <span class="kw">return</span> () => { conn.stop() }
+  }, [queryClient])
+}</pre>
+        </div>
+      </div>
+
+      <!-- ZUSTAND -->
+      <div class="section" id="f4">
+        <div class="section-header">
+          <span class="step-badge">Setup</span>
+          <span class="section-title">Zustand store</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">typescript</span><span class="code-file">webscrape-web/src/store/useAppStore.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { create } <span class="kw">from</span> <span class="str">'zustand'</span>
+<span class="kw">import type</span> { ScrapeJob, ScrapeResultDetail } <span class="kw">from</span> <span class="str">'../api/client'</span>
+
+<span class="kw">interface</span> AppState {
+  <span class="cm">// Job form modal</span>
+  jobModalOpen: <span class="kw">boolean</span>
+  editingJob: ScrapeJob | <span class="kw">null</span>
+  openJobModal: (job?: ScrapeJob) => <span class="kw">void</span>
+  closeJobModal: () => <span class="kw">void</span>
+  <span class="cm">// Result detail modal</span>
+  resultModalOpen: <span class="kw">boolean</span>
+  viewingResult: ScrapeResultDetail | <span class="kw">null</span>
+  openResultModal: (result: ScrapeResultDetail) => <span class="kw">void</span>
+  closeResultModal: () => <span class="kw">void</span>
+}
+
+<span class="kw">export const</span> useAppStore = create&lt;AppState&gt;(set => ({
+  jobModalOpen: <span class="kw">false</span>, editingJob: <span class="kw">null</span>,
+  openJobModal: (job) => set({ jobModalOpen: <span class="kw">true</span>, editingJob: job ?? <span class="kw">null</span> }),
+  closeJobModal: () => set({ jobModalOpen: <span class="kw">false</span>, editingJob: <span class="kw">null</span> }),
+  resultModalOpen: <span class="kw">false</span>, viewingResult: <span class="kw">null</span>,
+  openResultModal: (result) => set({ resultModalOpen: <span class="kw">true</span>, viewingResult: result }),
+  closeResultModal: () => set({ resultModalOpen: <span class="kw">false</span>, viewingResult: <span class="kw">null</span> })
+}))</pre>
+        </div>
+      </div>
+
+      <!-- SCRAPER PAGE -->
+      <div class="section" id="f5">
+        <div class="section-header">
+          <span class="step-badge">Pages</span>
+          <span class="section-title">Page 1: ScraperPage.tsx</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">tsx</span><span class="code-file">webscrape-web/src/pages/ScraperPage.tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { useQuery, useMutation, useQueryClient } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>
+<span class="kw">import</span> { jobsApi, analyticsApi } <span class="kw">from</span> <span class="str">'../api/client'</span>
+<span class="kw">import</span> { useAppStore } <span class="kw">from</span> <span class="str">'../store/useAppStore'</span>
+<span class="kw">import</span> { AnalyticsCards } <span class="kw">from</span> <span class="str">'../components/AnalyticsCards'</span>
+<span class="kw">import</span> { JobFormModal } <span class="kw">from</span> <span class="str">'../components/JobFormModal'</span>
+<span class="kw">import</span> { format } <span class="kw">from</span> <span class="str">'date-fns'</span>
+
+<span class="kw">export function</span> ScraperPage() {
+  <span class="kw">const</span> queryClient = useQueryClient()
+  <span class="kw">const</span> { openJobModal, jobModalOpen } = useAppStore()
+
+  <span class="kw">const</span> { data: jobs = [], isLoading } = useQuery({
+    queryKey: [<span class="str">'jobs'</span>],
+    queryFn: jobsApi.getAll,
+    refetchInterval: <span class="num">30000</span>
+  })
+
+  <span class="kw">const</span> { data: analytics } = useQuery({
+    queryKey: [<span class="str">'analytics'</span>],
+    queryFn: analyticsApi.get,
+    refetchInterval: <span class="num">30000</span>
+  })
+
+  <span class="kw">const</span> deleteMutation = useMutation({
+    mutationFn: jobsApi.delete,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [<span class="str">'jobs'</span>] })
+  })
+
+  <span class="kw">const</span> statusColors: Record&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt; = {
+    Pending: <span class="str">'bg-yellow-900/40 text-yellow-300 border border-yellow-800'</span>,
+    Running: <span class="str">'bg-blue-900/40 text-blue-300 border border-blue-800'</span>,
+    Completed: <span class="str">'bg-green-900/40 text-green-300 border border-green-800'</span>,
+    Failed: <span class="str">'bg-red-900/40 text-red-300 border border-red-800'</span>
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="cls">div</span> className=<span class="str">"p-8 max-w-6xl mx-auto"</span>&gt;
+      &lt;<span class="cls">div</span> className=<span class="str">"flex items-center justify-between mb-8"</span>&gt;
+        &lt;<span class="cls">div</span>&gt;
+          &lt;<span class="cls">h1</span> className=<span class="str">"text-2xl font-semibold text-white"</span>&gt;Scraper&lt;/<span class="cls">h1</span>&gt;
+          &lt;<span class="cls">p</span> className=<span class="str">"text-slate-400 text-sm mt-1"</span>&gt;Manage and schedule your scrape jobs&lt;/<span class="cls">p</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+        &lt;<span class="cls">button</span>
+          onClick={() =&gt; openJobModal()}
+          className=<span class="str">"bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"</span>
+        &gt;
+          + New scrape job
+        &lt;/<span class="cls">button</span>&gt;
+      &lt;/<span class="cls">div</span>&gt;
+
+      {analytics &amp;&amp; &lt;<span class="cls">AnalyticsCards</span> analytics={analytics} /&gt;}
+
+      &lt;<span class="cls">div</span> className=<span class="str">"mt-8 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden"</span>&gt;
+        &lt;<span class="cls">div</span> className=<span class="str">"px-6 py-4 border-b border-slate-800"</span>&gt;
+          &lt;<span class="cls">h2</span> className=<span class="str">"text-sm font-semibold text-slate-300"</span>&gt;Scrape jobs&lt;/<span class="cls">h2</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+        {isLoading ? (
+          &lt;<span class="cls">div</span> className=<span class="str">"p-8 text-center text-slate-500"</span>&gt;Loading...&lt;/<span class="cls">div</span>&gt;
+        ) : jobs.length === <span class="num">0</span> ? (
+          &lt;<span class="cls">div</span> className=<span class="str">"p-12 text-center text-slate-500"</span>&gt;
+            &lt;<span class="cls">p</span>&gt;No scrape jobs yet.&lt;/<span class="cls">p</span>&gt;
+            &lt;<span class="cls">button</span> onClick={() =&gt; openJobModal()} className=<span class="str">"mt-3 text-blue-400 text-sm hover:text-blue-300"</span>&gt;
+              Create your first job →
+            &lt;/<span class="cls">button</span>&gt;
+          &lt;/<span class="cls">div</span>&gt;
+        ) : (
+          &lt;<span class="cls">table</span> className=<span class="str">"w-full"</span>&gt;
+            &lt;<span class="cls">thead</span>&gt;
+              &lt;<span class="cls">tr</span> className=<span class="str">"text-xs text-slate-500 uppercase tracking-wide border-b border-slate-800"</span>&gt;
+                {[<span class="str">'Name'</span>, <span class="str">'URL'</span>, <span class="str">'Schedule'</span>, <span class="str">'Status'</span>, <span class="str">'Last run'</span>, <span class="str">'Next run'</span>, <span class="str">'Actions'</span>].map(h =&gt;
+                  &lt;<span class="cls">th</span> key={h} className=<span class="str">"text-left px-6 py-3 font-medium"</span>&gt;{h}&lt;/<span class="cls">th</span>&gt;)}
+              &lt;/<span class="cls">tr</span>&gt;
+            &lt;/<span class="cls">thead</span>&gt;
+            &lt;<span class="cls">tbody</span>&gt;
+              {jobs.map(job =&gt; (
+                &lt;<span class="cls">tr</span> key={job.id} className=<span class="str">"border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-white text-sm font-medium"</span>&gt;{job.name}&lt;/<span class="cls">td</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm font-mono truncate max-w-[200px]"</span>&gt;{job.url}&lt;/<span class="cls">td</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm"</span>&gt;
+                    {job.scheduleType === <span class="str">'Recurring'</span> ? job.cronExpression : <span class="str">'One-time'</span>}
+                  &lt;/<span class="cls">td</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4"</span>&gt;
+                    &lt;<span class="cls">span</span> className={`text-xs px-2 py-1 rounded-full ${statusColors[job.status]}`}&gt;
+                      {job.status}
+                    &lt;/<span class="cls">span</span>&gt;
+                  &lt;/<span class="cls">td</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm"</span>&gt;
+                    {job.lastRunAt ? format(<span class="kw">new</span> Date(job.lastRunAt), <span class="str">'MMM d, HH:mm'</span>) : <span class="str">'—'</span>}
+                  &lt;/<span class="cls">td</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm"</span>&gt;
+                    {job.nextRunAt ? format(<span class="kw">new</span> Date(job.nextRunAt), <span class="str">'MMM d, HH:mm'</span>) : <span class="str">'—'</span>}
+                  &lt;/<span class="cls">td</span>&gt;
+                  &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4"</span>&gt;
+                    &lt;<span class="cls">div</span> className=<span class="str">"flex gap-2"</span>&gt;
+                      &lt;<span class="cls">button</span> onClick={() =&gt; openJobModal(job)}
+                        className=<span class="str">"text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 px-2 py-1 rounded transition-colors"</span>&gt;
+                        Edit
+                      &lt;/<span class="cls">button</span>&gt;
+                      &lt;<span class="cls">button</span>
+                        onClick={() =&gt; { <span class="kw">if</span> (confirm(<span class="str">'Delete this job?'</span>)) deleteMutation.mutate(job.id) }}
+                        className=<span class="str">"text-xs text-red-400 hover:text-red-300 border border-red-900 hover:border-red-700 px-2 py-1 rounded transition-colors"</span>&gt;
+                        Delete
+                      &lt;/<span class="cls">button</span>&gt;
+                    &lt;/<span class="cls">div</span>&gt;
+                  &lt;/<span class="cls">td</span>&gt;
+                &lt;/<span class="cls">tr</span>&gt;
+              ))}
+            &lt;/<span class="cls">tbody</span>&gt;
+          &lt;/<span class="cls">table</span>&gt;
+        )}
+      &lt;/<span class="cls">div</span>&gt;
+
+      {jobModalOpen &amp;&amp; &lt;<span class="cls">JobFormModal</span> /&gt;}
+    &lt;/<span class="cls">div</span>&gt;
+  )
+}</pre>
+        </div>
+      </div>
+
+      <!-- ANALYTICS CARDS -->
+      <div class="section" id="f6">
+        <div class="section-header">
+          <span class="step-badge">Components</span>
+          <span class="section-title">Analytics cards</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">tsx</span><span class="code-file">webscrape-web/src/components/AnalyticsCards.tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import type</span> { Analytics } <span class="kw">from</span> <span class="str">'../api/client'</span>
+
+<span class="kw">function</span> formatBytes(bytes: <span class="kw">number</span>) {
+  <span class="kw">if</span> (bytes &lt; <span class="num">1024</span>) <span class="kw">return</span> `${bytes} B`
+  <span class="kw">if</span> (bytes &lt; <span class="num">1048576</span>) <span class="kw">return</span> `${(bytes / <span class="num">1024</span>).toFixed(<span class="num">1</span>)} KB`
+  <span class="kw">return</span> `${(bytes / <span class="num">1048576</span>).toFixed(<span class="num">1</span>)} MB`
+}
+
+<span class="kw">export function</span> AnalyticsCards({ analytics }: { analytics: Analytics }) {
+  <span class="kw">const</span> cards = [
+    { label: <span class="str">'Total jobs'</span>, value: analytics.totalJobs, color: <span class="str">'text-blue-400'</span> },
+    { label: <span class="str">'Successful'</span>, value: analytics.successfulJobs, color: <span class="str">'text-green-400'</span> },
+    { label: <span class="str">'Success rate'</span>, value: `${analytics.successRate}%`, color: <span class="str">'text-emerald-400'</span> },
+    { label: <span class="str">'Data collected'</span>, value: formatBytes(analytics.totalBytesCollected), color: <span class="str">'text-purple-400'</span> }
+  ]
+
+  <span class="kw">return</span> (
+    &lt;<span class="cls">div</span> className=<span class="str">"grid grid-cols-2 lg:grid-cols-4 gap-4"</span>&gt;
+      {cards.map(c =&gt; (
+        &lt;<span class="cls">div</span> key={c.label} className=<span class="str">"bg-slate-900 border border-slate-800 rounded-xl p-5"</span>&gt;
+          &lt;<span class="cls">p</span> className=<span class="str">"text-xs text-slate-500 uppercase tracking-wide mb-2"</span>&gt;{c.label}&lt;/<span class="cls">p</span>&gt;
+          &lt;<span class="cls">p</span> className={`text-2xl font-semibold ${c.color}`}&gt;{c.value}&lt;/<span class="cls">p</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+      ))}
+      {analytics.upcomingJobs.length &gt; <span class="num">0</span> &amp;&amp; (
+        &lt;<span class="cls">div</span> className=<span class="str">"col-span-2 lg:col-span-4 bg-slate-900 border border-slate-800 rounded-xl p-5"</span>&gt;
+          &lt;<span class="cls">p</span> className=<span class="str">"text-xs text-slate-500 uppercase tracking-wide mb-3"</span>&gt;Upcoming schedules&lt;/<span class="cls">p</span>&gt;
+          &lt;<span class="cls">div</span> className=<span class="str">"flex flex-wrap gap-3"</span>&gt;
+            {analytics.upcomingJobs.map(j =&gt; (
+              &lt;<span class="cls">div</span> key={j.name} className=<span class="str">"flex items-center gap-2 bg-slate-800 px-3 py-2 rounded-lg"</span>&gt;
+                &lt;<span class="cls">div</span> className=<span class="str">"w-2 h-2 rounded-full bg-amber-400"</span>&gt;&lt;/<span class="cls">div</span>&gt;
+                &lt;<span class="cls">span</span> className=<span class="str">"text-sm text-slate-300"</span>&gt;{j.name}&lt;/<span class="cls">span</span>&gt;
+                &lt;<span class="cls">span</span> className=<span class="str">"text-xs text-slate-500"</span>&gt;
+                  {<span class="kw">new</span> Date(j.nextRun).toLocaleString()}
+                &lt;/<span class="cls">span</span>&gt;
+              &lt;/<span class="cls">div</span>&gt;
+            ))}
+          &lt;/<span class="cls">div</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+      )}
+    &lt;/<span class="cls">div</span>&gt;
+  )
+}</pre>
+        </div>
+      </div>
+
+      <!-- JOB FORM MODAL -->
+      <div class="section" id="f7">
+        <div class="section-header">
+          <span class="step-badge">Components</span>
+          <span class="section-title">Job form modal</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">tsx</span><span class="code-file">webscrape-web/src/components/JobFormModal.tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> { useMutation, useQueryClient } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>
+<span class="kw">import</span> { jobsApi } <span class="kw">from</span> <span class="str">'../api/client'</span>
+<span class="kw">import</span> { useAppStore } <span class="kw">from</span> <span class="str">'../store/useAppStore'</span>
+
+<span class="kw">export function</span> JobFormModal() {
+  <span class="kw">const</span> { closeJobModal, editingJob } = useAppStore()
+  <span class="kw">const</span> queryClient = useQueryClient()
+
+  <span class="kw">const</span> [form, setForm] = useState({
+    name: editingJob?.name ?? <span class="str">''</span>,
+    url: editingJob?.url ?? <span class="str">''</span>,
+    scheduleType: editingJob?.scheduleType ?? <span class="str">'OneTime'</span> <span class="kw">as</span> <span class="str">'OneTime'</span> | <span class="str">'Recurring'</span>,
+    cronExpression: editingJob?.cronExpression ?? <span class="str">'0 9 * * *'</span>,
+    useHeadlessBrowser: editingJob?.useHeadlessBrowser ?? <span class="kw">false</span>
+  })
+
+  <span class="kw">const</span> mutation = useMutation({
+    mutationFn: () => editingJob
+      ? jobsApi.update(editingJob.id, form)
+      : jobsApi.create(form),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [<span class="str">'jobs'</span>] })
+      closeJobModal()
+    }
+  })
+
+  <span class="kw">const</span> inputClass = <span class="str">"w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 transition-colors"</span>
+  <span class="kw">const</span> labelClass = <span class="str">"block text-xs text-slate-400 mb-1.5 font-medium"</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="cls">div</span> className=<span class="str">"fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"</span>
+      onClick={e =&gt; e.target === e.currentTarget &amp;&amp; closeJobModal()}&gt;
+      &lt;<span class="cls">div</span> className=<span class="str">"bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6"</span>&gt;
+        &lt;<span class="cls">div</span> className=<span class="str">"flex items-center justify-between mb-6"</span>&gt;
+          &lt;<span class="cls">h2</span> className=<span class="str">"text-lg font-semibold text-white"</span>&gt;
+            {editingJob ? <span class="str">'Edit job'</span> : <span class="str">'New scrape job'</span>}
+          &lt;/<span class="cls">h2</span>&gt;
+          &lt;<span class="cls">button</span> onClick={closeJobModal} className=<span class="str">"text-slate-500 hover:text-white"</span>&gt;✕&lt;/<span class="cls">button</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+
+        &lt;<span class="cls">div</span> className=<span class="str">"space-y-4"</span>&gt;
+          &lt;<span class="cls">div</span>&gt;
+            &lt;<span class="cls">label</span> className={labelClass}&gt;Job name&lt;/<span class="cls">label</span>&gt;
+            &lt;<span class="cls">input</span> className={inputClass} value={form.name} placeholder=<span class="str">"e.g. Daily news scrape"</span>
+              onChange={e =&gt; setForm(f =&gt; ({ ...f, name: e.target.value }))} /&gt;
+          &lt;/<span class="cls">div</span>&gt;
+
+          &lt;<span class="cls">div</span>&gt;
+            &lt;<span class="cls">label</span> className={labelClass}&gt;Target URL&lt;/<span class="cls">label</span>&gt;
+            &lt;<span class="cls">input</span> className={inputClass} value={form.url} placeholder=<span class="str">"https://example.com"</span>
+              onChange={e =&gt; setForm(f =&gt; ({ ...f, url: e.target.value }))} /&gt;
+          &lt;/<span class="cls">div</span>&gt;
+
+          &lt;<span class="cls">div</span>&gt;
+            &lt;<span class="cls">label</span> className={labelClass}&gt;Schedule type&lt;/<span class="cls">label</span>&gt;
+            &lt;<span class="cls">div</span> className=<span class="str">"flex gap-2"</span>&gt;
+              {([<span class="str">'OneTime'</span>, <span class="str">'Recurring'</span>] <span class="kw">as const</span>).map(t =&gt; (
+                &lt;<span class="cls">button</span> key={t}
+                  onClick={() =&gt; setForm(f =&gt; ({ ...f, scheduleType: t }))}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors border
+                    ${form.scheduleType === t
+                      ? <span class="str">'bg-blue-600 border-blue-500 text-white'</span>
+                      : <span class="str">'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'</span>}`}&gt;
+                  {t === <span class="str">'OneTime'</span> ? <span class="str">'One-time'</span> : <span class="str">'Recurring (cron)'</span>}
+                &lt;/<span class="cls">button</span>&gt;
+              ))}
+            &lt;/<span class="cls">div</span>&gt;
+          &lt;/<span class="cls">div</span>&gt;
+
+          {form.scheduleType === <span class="str">'Recurring'</span> &amp;&amp; (
+            &lt;<span class="cls">div</span>&gt;
+              &lt;<span class="cls">label</span> className={labelClass}&gt;Cron expression&lt;/<span class="cls">label</span>&gt;
+              &lt;<span class="cls">input</span> className={inputClass} value={form.cronExpression}
+                placeholder=<span class="str">"0 9 * * * (daily at 9am)"</span>
+                onChange={e =&gt; setForm(f =&gt; ({ ...f, cronExpression: e.target.value }))} /&gt;
+              &lt;<span class="cls">p</span> className=<span class="str">"text-xs text-slate-500 mt-1"</span>&gt;
+                Common: <span class="str">"0 9 * * *"</span> = daily 9am · <span class="str">"0 */6 * * *"</span> = every 6h
+              &lt;/<span class="cls">p</span>&gt;
+            &lt;/<span class="cls">div</span>&gt;
+          )}
+
+          &lt;<span class="cls">label</span> className=<span class="str">"flex items-center gap-3 cursor-pointer"</span>&gt;
+            &lt;<span class="cls">input</span> type=<span class="str">"checkbox"</span> checked={form.useHeadlessBrowser}
+              onChange={e =&gt; setForm(f =&gt; ({ ...f, useHeadlessBrowser: e.target.checked }))}
+              className=<span class="str">"w-4 h-4 rounded accent-blue-600"</span> /&gt;
+            &lt;<span class="cls">span</span> className=<span class="str">"text-sm text-slate-300"</span>&gt;Use headless browser (for JS-heavy sites)&lt;/<span class="cls">span</span>&gt;
+          &lt;/<span class="cls">label</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+
+        &lt;<span class="cls">div</span> className=<span class="str">"flex gap-3 mt-6"</span>&gt;
+          &lt;<span class="cls">button</span> onClick={closeJobModal}
+            className=<span class="str">"flex-1 py-2 border border-slate-700 text-slate-400 rounded-lg text-sm hover:text-white hover:border-slate-500 transition-colors"</span>&gt;
+            Cancel
+          &lt;/<span class="cls">button</span>&gt;
+          &lt;<span class="cls">button</span>
+            onClick={() =&gt; mutation.mutate()}
+            disabled={mutation.isPending}
+            className=<span class="str">"flex-1 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"</span>&gt;
+            {mutation.isPending ? <span class="str">'Saving...'</span> : editingJob ? <span class="str">'Update'</span> : <span class="str">'Create job'</span>}
+          &lt;/<span class="cls">button</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+      &lt;/<span class="cls">div</span>&gt;
+    &lt;/<span class="cls">div</span>&gt;
+  )
+}</pre>
+        </div>
+      </div>
+
+      <!-- VIEWER PAGE -->
+      <div class="section" id="f8">
+        <div class="section-header">
+          <span class="step-badge">Pages</span>
+          <span class="section-title">Page 2: ViewerPage.tsx</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">tsx</span><span class="code-file">webscrape-web/src/pages/ViewerPage.tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> { useQuery } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>
+<span class="kw">import</span> { resultsApi } <span class="kw">from</span> <span class="str">'../api/client'</span>
+<span class="kw">import</span> { useAppStore } <span class="kw">from</span> <span class="str">'../store/useAppStore'</span>
+<span class="kw">import</span> { ResultModal } <span class="kw">from</span> <span class="str">'../components/ResultModal'</span>
+<span class="kw">import</span> { format } <span class="kw">from</span> <span class="str">'date-fns'</span>
+
+<span class="kw">export function</span> ViewerPage() {
+  <span class="kw">const</span> [page, setPage] = useState(<span class="num">1</span>)
+  <span class="kw">const</span> { openResultModal, resultModalOpen } = useAppStore()
+
+  <span class="kw">const</span> { data, isLoading } = useQuery({
+    queryKey: [<span class="str">'results'</span>, page],
+    queryFn: () => resultsApi.getPaged(page),
+    placeholderData: prev => prev
+  })
+
+  <span class="kw">const</span> totalPages = data ? Math.ceil(data.total / data.pageSize) : <span class="num">0</span>
+
+  <span class="kw">async function</span> handleView(id: <span class="kw">string</span>) {
+    <span class="kw">const</span> detail = <span class="kw">await</span> resultsApi.getById(id)
+    openResultModal(detail)
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="cls">div</span> className=<span class="str">"p-8 max-w-6xl mx-auto"</span>&gt;
+      &lt;<span class="cls">div</span> className=<span class="str">"mb-8"</span>&gt;
+        &lt;<span class="cls">h1</span> className=<span class="str">"text-2xl font-semibold text-white"</span>&gt;Viewer&lt;/<span class="cls">h1</span>&gt;
+        &lt;<span class="cls">p</span> className=<span class="str">"text-slate-400 text-sm mt-1"</span>&gt;Browse and download your scraped data&lt;/<span class="cls">p</span>&gt;
+      &lt;/<span class="cls">div</span>&gt;
+
+      &lt;<span class="cls">div</span> className=<span class="str">"bg-slate-900 border border-slate-800 rounded-xl overflow-hidden"</span>&gt;
+        &lt;<span class="cls">div</span> className=<span class="str">"px-6 py-4 border-b border-slate-800 flex items-center justify-between"</span>&gt;
+          &lt;<span class="cls">h2</span> className=<span class="str">"text-sm font-semibold text-slate-300"</span>&gt;
+            All results {data &amp;&amp; &lt;<span class="cls">span</span> className=<span class="str">"text-slate-500 font-normal"</span>&gt;({data.total} total)&lt;/<span class="cls">span</span>&gt;}
+          &lt;/<span class="cls">h2</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+
+        {isLoading ? (
+          &lt;<span class="cls">div</span> className=<span class="str">"p-8 text-center text-slate-500"</span>&gt;Loading results...&lt;/<span class="cls">div</span>&gt;
+        ) : !data || data.items.length === <span class="num">0</span> ? (
+          &lt;<span class="cls">div</span> className=<span class="str">"p-12 text-center text-slate-500"</span>&gt;No scrape results yet.&lt;/<span class="cls">div</span>&gt;
+        ) : (
+          &lt;&gt;
+            &lt;<span class="cls">table</span> className=<span class="str">"w-full"</span>&gt;
+              &lt;<span class="cls">thead</span>&gt;
+                &lt;<span class="cls">tr</span> className=<span class="str">"text-xs text-slate-500 uppercase tracking-wide border-b border-slate-800"</span>&gt;
+                  {[<span class="str">'Date/Time'</span>, <span class="str">'Job'</span>, <span class="str">'URL'</span>, <span class="str">'Schedule'</span>, <span class="str">'Size'</span>, <span class="str">'Status'</span>, <span class="str">'Actions'</span>].map(h =&gt;
+                    &lt;<span class="cls">th</span> key={h} className=<span class="str">"text-left px-6 py-3 font-medium"</span>&gt;{h}&lt;/<span class="cls">th</span>&gt;)}
+                &lt;/<span class="cls">tr</span>&gt;
+              &lt;/<span class="cls">thead</span>&gt;
+              &lt;<span class="cls">tbody</span>&gt;
+                {data.items.map(r =&gt; (
+                  &lt;<span class="cls">tr</span> key={r.id} className=<span class="str">"border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm font-mono"</span>&gt;
+                      {format(<span class="kw">new</span> Date(r.scrapedAt), <span class="str">'MMM d yyyy, HH:mm'</span>)}
+                    &lt;/<span class="cls">td</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-white text-sm"</span>&gt;{r.jobName}&lt;/<span class="cls">td</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm font-mono truncate max-w-[180px]"</span>&gt;{r.url}&lt;/<span class="cls">td</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm"</span>&gt;{r.scheduleType}&lt;/<span class="cls">td</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4 text-slate-400 text-sm"</span>&gt;
+                      {r.fileSizeBytes &gt; <span class="num">1024</span> ? `${(r.fileSizeBytes/<span class="num">1024</span>).toFixed(<span class="num">1</span>)} KB` : `${r.fileSizeBytes} B`}
+                    &lt;/<span class="cls">td</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4"</span>&gt;
+                      &lt;<span class="cls">span</span> className={`text-xs px-2 py-1 rounded-full ${r.success
+                        ? <span class="str">'bg-green-900/40 text-green-300 border border-green-800'</span>
+                        : <span class="str">'bg-red-900/40 text-red-300 border border-red-800'</span>}`}&gt;
+                        {r.success ? <span class="str">'Success'</span> : <span class="str">'Failed'</span>}
+                      &lt;/<span class="cls">span</span>&gt;
+                    &lt;/<span class="cls">td</span>&gt;
+                    &lt;<span class="cls">td</span> className=<span class="str">"px-6 py-4"</span>&gt;
+                      &lt;<span class="cls">div</span> className=<span class="str">"flex gap-2"</span>&gt;
+                        &lt;<span class="cls">button</span> onClick={() =&gt; handleView(r.id)}
+                          className=<span class="str">"text-xs text-blue-400 hover:text-blue-300 border border-blue-900 hover:border-blue-700 px-2 py-1 rounded transition-colors"</span>&gt;
+                          View
+                        &lt;/<span class="cls">button</span>&gt;
+                        &lt;<span class="cls">a</span> href={resultsApi.downloadUrl(r.id)} download
+                          className=<span class="str">"text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 px-2 py-1 rounded transition-colors"</span>&gt;
+                          Download
+                        &lt;/<span class="cls">a</span>&gt;
+                      &lt;/<span class="cls">div</span>&gt;
+                    &lt;/<span class="cls">td</span>&gt;
+                  &lt;/<span class="cls">tr</span>&gt;
+                ))}
+              &lt;/<span class="cls">tbody</span>&gt;
+            &lt;/<span class="cls">table</span>&gt;
+
+            &lt;<span class="cls">div</span> className=<span class="str">"flex items-center justify-between px-6 py-4 border-t border-slate-800"</span>&gt;
+              &lt;<span class="cls">span</span> className=<span class="str">"text-sm text-slate-500"</span>&gt;Page {page} of {totalPages}&lt;/<span class="cls">span</span>&gt;
+              &lt;<span class="cls">div</span> className=<span class="str">"flex gap-2"</span>&gt;
+                &lt;<span class="cls">button</span> onClick={() =&gt; setPage(p =&gt; Math.max(<span class="num">1</span>, p - <span class="num">1</span>)} disabled={page === <span class="num">1</span>}
+                  className=<span class="str">"px-3 py-1.5 text-sm border border-slate-700 rounded text-slate-400 hover:text-white disabled:opacity-30 transition-colors"</span>&gt;
+                  ← Prev
+                &lt;/<span class="cls">button</span>&gt;
+                &lt;<span class="cls">button</span> onClick={() =&gt; setPage(p =&gt; Math.min(totalPages, p + <span class="num">1</span>))} disabled={page === totalPages}
+                  className=<span class="str">"px-3 py-1.5 text-sm border border-slate-700 rounded text-slate-400 hover:text-white disabled:opacity-30 transition-colors"</span>&gt;
+                  Next →
+                &lt;/<span class="cls">button</span>&gt;
+              &lt;/<span class="cls">div</span>&gt;
+            &lt;/<span class="cls">div</span>&gt;
+          &lt;/&gt;
+        )}
+      &lt;/<span class="cls">div</span>&gt;
+
+      {resultModalOpen &amp;&amp; &lt;<span class="cls">ResultModal</span> /&gt;}
+    &lt;/<span class="cls">div</span>&gt;
+  )
+}</pre>
+        </div>
+      </div>
+
+      <!-- RESULT MODAL -->
+      <div class="section" id="f9">
+        <div class="section-header">
+          <span class="step-badge">Components</span>
+          <span class="section-title">Result detail modal</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">tsx</span><span class="code-file">webscrape-web/src/components/ResultModal.tsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> { useAppStore } <span class="kw">from</span> <span class="str">'../store/useAppStore'</span>
+<span class="kw">import</span> { resultsApi } <span class="kw">from</span> <span class="str">'../api/client'</span>
+<span class="kw">import</span> { format } <span class="kw">from</span> <span class="str">'date-fns'</span>
+
+<span class="kw">export function</span> ResultModal() {
+  <span class="kw">const</span> { closeResultModal, viewingResult } = useAppStore()
+  <span class="kw">const</span> [view, setView] = useState&lt;<span class="str">'text'</span> | <span class="str">'html'</span>&gt;(<span class="str">'text'</span>)
+
+  <span class="kw">if</span> (!viewingResult) <span class="kw">return null</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="cls">div</span> className=<span class="str">"fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"</span>
+      onClick={e =&gt; e.target === e.currentTarget &amp;&amp; closeResultModal()}&gt;
+      &lt;<span class="cls">div</span> className=<span class="str">"bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col"</span>&gt;
+
+        &lt;<span class="cls">div</span> className=<span class="str">"flex items-start justify-between p-6 border-b border-slate-800"</span>&gt;
+          &lt;<span class="cls">div</span>&gt;
+            &lt;<span class="cls">h2</span> className=<span class="str">"text-lg font-semibold text-white"</span>&gt;{viewingResult.jobName}&lt;/<span class="cls">h2</span>&gt;
+            &lt;<span class="cls">p</span> className=<span class="str">"text-sm text-slate-500 font-mono mt-1"</span>&gt;{viewingResult.url}&lt;/<span class="cls">p</span>&gt;
+            &lt;<span class="cls">p</span> className=<span class="str">"text-xs text-slate-600 mt-1"</span>&gt;
+              Scraped {format(<span class="kw">new</span> Date(viewingResult.scrapedAt), <span class="str">'PPpp'</span>)}
+            &lt;/<span class="cls">p</span>&gt;
+          &lt;/<span class="cls">div</span>&gt;
+          &lt;<span class="cls">div</span> className=<span class="str">"flex items-center gap-3"</span>&gt;
+            &lt;<span class="cls">a</span> href={resultsApi.downloadUrl(viewingResult.id, <span class="str">'json'</span>)} download
+              className=<span class="str">"text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg transition-colors"</span>&gt;
+              Download JSON
+            &lt;/<span class="cls">a</span>&gt;
+            &lt;<span class="cls">a</span> href={resultsApi.downloadUrl(viewingResult.id, <span class="str">'html'</span>)} download
+              className=<span class="str">"text-xs border border-slate-700 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition-colors"</span>&gt;
+              Download HTML
+            &lt;/<span class="cls">a</span>&gt;
+            &lt;<span class="cls">button</span> onClick={closeResultModal} className=<span class="str">"text-slate-500 hover:text-white ml-2"</span>&gt;✕&lt;/<span class="cls">button</span>&gt;
+          &lt;/<span class="cls">div</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+
+        &lt;<span class="cls">div</span> className=<span class="str">"flex gap-2 px-6 py-3 border-b border-slate-800"</span>&gt;
+          {([<span class="str">'text'</span>, <span class="str">'html'</span>] <span class="kw">as const</span>).map(v =&gt; (
+            &lt;<span class="cls">button</span> key={v} onClick={() =&gt; setView(v)}
+              className={`px-3 py-1 rounded-md text-sm transition-colors
+                ${view === v ? <span class="str">'bg-slate-700 text-white'</span> : <span class="str">'text-slate-500 hover:text-white'</span>}`}&gt;
+              {v === <span class="str">'text'</span> ? <span class="str">'Extracted text'</span> : <span class="str">'Raw HTML'</span>}
+            &lt;/<span class="cls">button</span>&gt;
+          ))}
+        &lt;/<span class="cls">div</span>&gt;
+
+        &lt;<span class="cls">div</span> className=<span class="str">"flex-1 overflow-y-auto p-6"</span>&gt;
+          &lt;<span class="cls">pre</span> className=<span class="str">"text-sm text-slate-300 whitespace-pre-wrap font-mono leading-relaxed"</span>&gt;
+            {view === <span class="str">'text'</span> ? viewingResult.extractedText : viewingResult.rawHtml}
+          &lt;/<span class="cls">pre</span>&gt;
+        &lt;/<span class="cls">div</span>&gt;
+      &lt;/<span class="cls">div</span>&gt;
+    &lt;/<span class="cls">div</span>&gt;
+  )
+}</pre>
+        </div>
+      </div>
+
+    </div><!-- /tab-frontend -->
+
+    <!-- ============================================================ -->
+    <!-- TAB: DEPLOY -->
+    <!-- ============================================================ -->
+    <div class="tab-content" id="tab-deploy">
+
+      <!-- DOCKERFILE BACKEND -->
+      <div class="section" id="d1">
+        <div class="section-header">
+          <span class="step-badge">Deploy</span>
+          <span class="section-title">Dockerfiles</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">dockerfile</span><span class="code-file">WebScrape.API/Dockerfile</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cm"># Build stage</span>
+FROM mcr.microsoft.com/dotnet/sdk:<span class="num">10.0</span> AS build
+WORKDIR /src
+
+<span class="cm"># Copy project files and restore</span>
+COPY WebScrape.Domain/WebScrape.Domain.csproj WebScrape.Domain/
+COPY WebScrape.Application/WebScrape.Application.csproj WebScrape.Application/
+COPY WebScrape.Infrastructure/WebScrape.Infrastructure.csproj WebScrape.Infrastructure/
+COPY WebScrape.API/WebScrape.API.csproj WebScrape.API/
+RUN dotnet restore WebScrape.API/WebScrape.API.csproj
+
+<span class="cm"># Copy all source code and build</span>
+COPY . .
+RUN dotnet publish WebScrape.API/WebScrape.API.csproj -c Release -o /app/publish
+
+<span class="cm"># Runtime stage (smaller image)</span>
+FROM mcr.microsoft.com/dotnet/aspnet:<span class="num">10.0</span> AS runtime
+WORKDIR /app
+
+<span class="cm"># Install Chromium for PuppeteerSharp</span>
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-sandbox \
+    --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+COPY --from=build /app/publish .
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "WebScrape.API.dll"]</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">dockerfile</span><span class="code-file">webscrape-web/Dockerfile</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cm"># Build stage</span>
+FROM node:<span class="num">22</span>-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+<span class="cm"># Serve with nginx</span>
+FROM nginx:alpine AS runtime
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">nginx</span><span class="code-file">webscrape-web/nginx.conf</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    <span class="cm"># SPA routing - serve index.html for all routes</span>
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    <span class="cm"># Proxy API calls to backend</span>
+    location /api {
+        proxy_pass http://api:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    <span class="cm"># Proxy SignalR WebSocket</span>
+    location /hubs {
+        proxy_pass http://api:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}</pre>
+        </div>
+      </div>
+
+      <!-- RAILWAY.TOML -->
+      <div class="section" id="d2">
+        <div class="section-header">
+          <span class="step-badge">Deploy</span>
+          <span class="section-title">railway.toml</span>
+        </div>
+        <p>This file at the project root tells Railway how to build and run each service.</p>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">toml</span><span class="code-file">railway.toml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre>[build]
+  builder = "DOCKERFILE"
+
+[[services]]
+  name = "api"
+  source = "."
+  dockerfilePath = "WebScrape.API/Dockerfile"
+  [[services.variables]]
+    name = "ASPNETCORE_URLS"
+    value = "http://+:8080"
+
+[[services]]
+  name = "web"
+  source = "webscrape-web"
+  dockerfilePath = "webscrape-web/Dockerfile"</pre>
+        </div>
+      </div>
+
+      <!-- ENV VARIABLES -->
+      <div class="section" id="d3">
+        <div class="section-header">
+          <span class="step-badge">Deploy</span>
+          <span class="section-title">Environment variables</span>
+        </div>
+        <p>Set these in the Railway dashboard for each service. Railway auto-provides <code>DATABASE_URL</code> when you add a PostgreSQL plugin.</p>
+        <table>
+          <tr><th>Variable</th><th>Service</th><th>Value / Notes</th></tr>
+          <tr><td>ConnectionStrings__DefaultConnection</td><td>api</td><td>Railway PostgreSQL URL (auto-set)</td></tr>
+          <tr><td>FRONTEND_URL</td><td>api</td><td>Your Railway frontend service URL</td></tr>
+          <tr><td>ASPNETCORE_ENVIRONMENT</td><td>api</td><td>Production</td></tr>
+          <tr><td>PUPPETEER_EXECUTABLE_PATH</td><td>api</td><td>/usr/bin/chromium</td></tr>
+          <tr><td>VITE_API_URL</td><td>web</td><td>Your Railway API service URL</td></tr>
+        </table>
+        <div class="callout green">
+          <strong>Railway PostgreSQL:</strong> In your Railway project, click "New" → "Database" → "PostgreSQL". It auto-injects the connection string into your API service. No manual configuration needed.
+        </div>
+      </div>
+
+      <!-- PUSH AND LAUNCH -->
+      <div class="section" id="d4">
+        <div class="section-header">
+          <span class="step-badge">Deploy</span>
+          <span class="section-title">Push and launch</span>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">bash</span><span class="code-file">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cm"># 1. Install Railway CLI</span>
+npm install -g @railway/cli
+
+<span class="cm"># 2. Login</span>
+railway login
+
+<span class="cm"># 3. Initialize project (from WebScrape/ root)</span>
+railway init
+
+<span class="cm"># 4. Add PostgreSQL plugin via Railway dashboard</span>
+<span class="cm"># Dashboard → New → Database → PostgreSQL</span>
+
+<span class="cm"># 5. Deploy</span>
+railway up
+
+<span class="cm"># 6. Open your app in browser</span>
+railway open
+
+<span class="cm"># 7. View logs</span>
+railway logs
+
+<span class="cm"># 8. To run locally for development</span>
+<span class="cm"># Start PostgreSQL locally (Docker)</span>
+docker run -d -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=webscrape -p 5432:5432 postgres:16
+
+<span class="cm"># Run backend</span>
+cd WebScrape.API && dotnet run
+
+<span class="cm"># Run frontend (in a separate terminal)</span>
+cd webscrape-web && npm run dev
+
+<span class="cm"># Hangfire dashboard available at:</span>
+<span class="cm"># http://localhost:5000/hangfire</span>
+<span class="cm"># Swagger API docs at:</span>
+<span class="cm"># http://localhost:5000/swagger</span></pre>
+        </div>
+        <div class="callout">
+          <strong>Dev tip:</strong> The Vite dev server proxies <code>/api</code> and <code>/hubs</code> to <code>localhost:5000</code> — so your React app and .NET API can run simultaneously on different ports without CORS issues during development.
+        </div>
+        <div class="callout green">
+          <strong>You're done!</strong> Your WebScrape SaaS is now live on Railway with: a managed PostgreSQL database, Hangfire job processing both one-time and recurring scrape jobs, SignalR pushing live status updates to the React frontend, and a viewer page with pagination, modal preview, and download options for all scraped data.
+        </div>
+      </div>
+
+    </div><!-- /tab-deploy -->
+
+  </main>
+</div>
+
+<script>
+  // Helper: make a sidebar link visible inside the aside container
+  function ensureSidebarLinkVisible(link) {
+    if (!link) return
+    // scrollIntoView will target the nearest scrollable ancestor (the aside)
+    link.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  // Tab switching
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'))
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+    // mark clicked button active (use event if available)
+    try { if (event?.target) event.target.classList.add('active') } catch(e){}
+    document.getElementById('tab-' + tab).classList.add('active')
+
+    // show proper sidebar
+    document.querySelectorAll('[id^="sidebar-"]').forEach(s => s.style.display = 'none')
+    const shown = document.getElementById('sidebar-' + tab)
+    if (shown) shown.style.display = 'block'
+
+    // scroll page to top of content
+    window.scrollTo(0, 0)
+
+    // ensure active link in the shown sidebar is visible
+    const active = shown?.querySelector('.sidebar-link.active') || shown?.querySelector('.sidebar-link')
+    if (active) ensureSidebarLinkVisible(active)
+  }
+
+  // Scroll main content to a section and sync sidebar
+  function scrollTo(id) {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+
+    // find the currently visible sidebar (the one with display != 'none')
+    const visibleSidebar = Array.from(document.querySelectorAll('[id^="sidebar-"]')).find(s => s.style.display !== 'none')
+    if (visibleSidebar) {
+      // find the sidebar link that targets this id
+      const link = visibleSidebar.querySelector(`.sidebar-link[onclick*="${id}"]`)
+      if (link) {
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'))
+        link.classList.add('active')
+        ensureSidebarLinkVisible(link)
+      }
+    }
+  }
+
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.documentElement
+    const scrolled = el.scrollTop
+    const total = el.scrollHeight - el.clientHeight
+    document.getElementById('progress').style.width = (scrolled / total * 100) + '%'
+  })
+
+  // Copy code
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre')
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!'
+      setTimeout(() => btn.textContent = 'Copy', 2000)
+    })
+  }
+
+  // Active sidebar on scroll — also ensure visible sidebar scrolls to the active link
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id
+        // find the visible sidebar
+        const visibleSidebar = Array.from(document.querySelectorAll('[id^="sidebar-"]')).find(s => s.style.display !== 'none')
+        if (visibleSidebar) {
+          const link = visibleSidebar.querySelector(`.sidebar-link[onclick*="${id}"]`)
+          if (link) {
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'))
+            link.classList.add('active')
+            ensureSidebarLinkVisible(link)
+          }
+        } else {
+          // fallback: set active class across all sidebar links that point to this id
+          document.querySelectorAll('.sidebar-link').forEach(l => {
+            if (l.getAttribute('onclick')?.includes(id)) l.classList.add('active')
+            else l.classList.remove('active')
+          })
+        }
+      }
+    })
+  }, { rootMargin: '-20% 0px -70% 0px' })
+
+  document.querySelectorAll('.section').forEach(s => observer.observe(s))
+
+  // Ensure clicking any sidebar link scrolls the main content smoothly
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault()
+      const onclick = this.getAttribute('onclick') || ''
+      const m = onclick.match(/scrollTo\('([^']+)'\)/)
+      if (m) scrollTo(m[1])
+      else {
+        const href = this.getAttribute('href')
+        if (href && href.startsWith('#')) scrollTo(href.slice(1))
+      }
+    })
+  })
+</script>
+</body>
+</html>
