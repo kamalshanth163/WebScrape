@@ -75,3 +75,11 @@ coverage/
 *.pid
 *.seed
 *.pid.lock
+
+bin/
+obj/
+node_modules/
+.vscode/
+*.exe
+*.dll
+*.zip
