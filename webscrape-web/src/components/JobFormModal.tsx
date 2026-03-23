@@ -1,5 +1,3 @@
-// webscrape-web/src/components/JobFormModal.tsx
-
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { jobsApi } from '../api/client'
@@ -31,11 +29,25 @@ export function JobFormModal() {
   }
 
   const mutation = useMutation({
-    mutationFn: () =>
-      editingJob ? jobsApi.update(editingJob.id, form) : jobsApi.create(form),
+    mutationFn: () => {
+      const payload: any = {
+        name: form.name,
+        url: form.url,
+        scheduleType: form.scheduleType === 'Recurring' ? 1 : 0,
+        useHeadlessBrowser: form.useHeadlessBrowser,
+      }
+      if (form.scheduleType === 'Recurring') payload.cronExpression = form.cronExpression
+      console.log('Submitting job payload', payload)
+      return editingJob ? jobsApi.update(editingJob.id, payload) : jobsApi.create(payload)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] })
       closeJobModal()
+    },
+    onError: (error: any) => {
+      console.error('Job create/update error:', error?.response?.data || error)
+      const msg = error?.response?.data?.message || error?.response?.data || 'Failed to save job'
+      setErrors(e => ({ ...e, submit: String(msg) }))
     },
   })
 
@@ -122,6 +134,7 @@ export function JobFormModal() {
         </div>
 
         <div className="modal-footer">
+          {errors.submit && <div className="form-error" style={{ width: '100%', marginBottom: 8 }}>{errors.submit}</div>}
           <button className="btn btn-ghost" style={{ flex: 1 }} onClick={closeJobModal}>
             Cancel
           </button>

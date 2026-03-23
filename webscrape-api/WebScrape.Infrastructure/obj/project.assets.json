@@ -15,6 +15,19 @@
           }
         }
       },
+      "Cronos/0.8.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Cronos.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Cronos.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Dapper/2.0.123": {
         "type": "package",
         "compile": {
@@ -1136,6 +1149,25 @@
         "lib/netstandard2.0/AngleSharp.dll",
         "lib/netstandard2.0/AngleSharp.xml",
         "logo.png"
+      ]
+    },
+    "Cronos/0.8.0": {
+      "sha512": "oFZxi/1VGRc+UB0qs3Vwkpc6Jqzl6XZX72OPxLZlc2ONuDpabq9Q9vAcyeX1QwcyfFZGxXWZO9YZSm+dekpwwQ==",
+      "type": "package",
+      "path": "cronos/0.8.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "cronos.0.8.0.nupkg.sha512",
+        "cronos.nuspec",
+        "lib/net40/Cronos.dll",
+        "lib/net40/Cronos.xml",
+        "lib/net45/Cronos.dll",
+        "lib/net45/Cronos.xml",
+        "lib/netstandard1.0/Cronos.dll",
+        "lib/netstandard1.0/Cronos.xml",
+        "lib/netstandard2.0/Cronos.dll",
+        "lib/netstandard2.0/Cronos.xml"
       ]
     },
     "Dapper/2.0.123": {
@@ -3278,6 +3310,7 @@
   "projectFileDependencyGroups": {
     "net10.0": [
       "AngleSharp >= 1.4.0",
+      "Cronos >= 0.8.0",
       "Hangfire.AspNetCore >= 1.8.23",
       "Hangfire.Core >= 1.8.23",
       "Hangfire.PostgreSql >= 1.21.1",
@@ -3296,11 +3329,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
+      "projectUniqueName": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
       "projectName": "WebScrape.Infrastructure",
-      "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
+      "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
       "packagesPath": "/home/shan/.nuget/packages/",
-      "outputPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/obj/",
+      "outputPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/shan/.nuget/NuGet/NuGet.Config"
@@ -3316,11 +3349,11 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
-              "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj"
+            "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
+              "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj"
             },
-            "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
-              "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj"
+            "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
+              "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj"
             }
           }
         }
@@ -3344,6 +3377,10 @@
           "AngleSharp": {
             "target": "Package",
             "version": "[1.4.0, )"
+          },
+          "Cronos": {
+            "target": "Package",
+            "version": "[0.8.0, )"
           },
           "Hangfire.AspNetCore": {
             "target": "Package",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj": {}
+    "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj": {}
   },
   "projects": {
-    "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj": {
+    "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+        "projectUniqueName": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
         "projectName": "WebScrape.API",
-        "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+        "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
         "packagesPath": "/home/shan/.nuget/packages/",
-        "outputPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/obj/",
+        "outputPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/shan/.nuget/NuGet/NuGet.Config"
@@ -27,11 +27,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
-                "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj"
+              "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
+                "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj"
               },
-              "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj": {
-                "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj"
+              "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj": {
+                "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj"
               }
             }
           }
@@ -512,14 +512,14 @@
         }
       }
     },
-    "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
+    "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj",
+        "projectUniqueName": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj",
         "projectName": "WebScrape.Application",
-        "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj",
+        "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj",
         "packagesPath": "/home/shan/.nuget/packages/",
-        "outputPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/obj/",
+        "outputPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/shan/.nuget/NuGet/NuGet.Config"
@@ -535,8 +535,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
-                "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj"
+              "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
+                "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj"
               }
             }
           }
@@ -860,14 +860,14 @@
         }
       }
     },
-    "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
+    "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
+        "projectUniqueName": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
         "projectName": "WebScrape.Domain",
-        "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
+        "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
         "packagesPath": "/home/shan/.nuget/packages/",
-        "outputPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/obj/",
+        "outputPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/shan/.nuget/NuGet/NuGet.Config"
@@ -1194,14 +1194,14 @@
         }
       }
     },
-    "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj": {
+    "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
+        "projectUniqueName": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
         "projectName": "WebScrape.Infrastructure",
-        "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
+        "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
         "packagesPath": "/home/shan/.nuget/packages/",
-        "outputPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/obj/",
+        "outputPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/shan/.nuget/NuGet/NuGet.Config"
@@ -1217,11 +1217,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
-                "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj"
+              "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj": {
+                "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Application/WebScrape.Application.csproj"
               },
-              "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
-                "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj"
+              "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj": {
+                "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj"
               }
             }
           }
@@ -1245,6 +1245,10 @@
             "AngleSharp": {
               "target": "Package",
               "version": "[1.4.0, )"
+            },
+            "Cronos": {
+              "target": "Package",
+              "version": "[0.8.0, )"
             },
             "Hangfire.AspNetCore": {
               "target": "Package",

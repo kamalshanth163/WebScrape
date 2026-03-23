@@ -9,6 +9,7 @@
       "WebScrape.Infrastructure/1.0.0": {
         "dependencies": {
           "AngleSharp": "1.4.0",
+          "Cronos": "0.8.0",
           "Hangfire.AspNetCore": "1.8.23",
           "Hangfire.Core": "1.8.23",
           "Hangfire.PostgreSql": "1.21.1",
@@ -29,6 +30,14 @@
           "lib/net10.0/AngleSharp.dll": {
             "assemblyVersion": "1.4.0.0",
             "fileVersion": "1.4.0.0"
+          }
+        }
+      },
+      "Cronos/0.8.0": {
+        "runtime": {
+          "lib/netstandard2.0/Cronos.dll": {
+            "assemblyVersion": "0.8.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -802,6 +811,13 @@
       "sha512": "sha512-6ph8mpaQx0KL0COYRt0kI8MB9gSp1PtKijKMhJU//+aVFgKAJLKDesG/+26JSaVCOrHNgPf12wpfoyRcMYOeXg==",
       "path": "anglesharp/1.4.0",
       "hashPath": "anglesharp.1.4.0.nupkg.sha512"
+    },
+    "Cronos/0.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-oFZxi/1VGRc+UB0qs3Vwkpc6Jqzl6XZX72OPxLZlc2ONuDpabq9Q9vAcyeX1QwcyfFZGxXWZO9YZSm+dekpwwQ==",
+      "path": "cronos/0.8.0",
+      "hashPath": "cronos.0.8.0.nupkg.sha512"
     },
     "Dapper/2.0.123": {
       "type": "package",

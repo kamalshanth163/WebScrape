@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
+      "projectUniqueName": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
       "projectName": "WebScrape.Domain",
-      "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
+      "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/WebScrape.Domain.csproj",
       "packagesPath": "/home/shan/.nuget/packages/",
-      "outputPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Domain/obj/",
+      "outputPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Domain/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/shan/.nuget/NuGet/NuGet.Config"

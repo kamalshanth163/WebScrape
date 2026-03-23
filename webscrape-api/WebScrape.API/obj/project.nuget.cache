@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "ANQM3FZvy48=",
+  "dgSpecHash": "epjYsO2OSto=",
   "success": true,
-  "projectFilePath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+  "projectFilePath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
   "expectedPackageFiles": [
     "/home/shan/.nuget/packages/anglesharp/1.4.0/anglesharp.1.4.0.nupkg.sha512",
+    "/home/shan/.nuget/packages/cronos/0.8.0/cronos.0.8.0.nupkg.sha512",
     "/home/shan/.nuget/packages/dapper/2.0.123/dapper.2.0.123.nupkg.sha512",
     "/home/shan/.nuget/packages/dapper.aot/1.0.48/dapper.aot.1.0.48.nupkg.sha512",
     "/home/shan/.nuget/packages/fluentvalidation/12.1.1/fluentvalidation.12.1.1.nupkg.sha512",
@@ -57,9 +58,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.AspNetCore.Cors will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+      "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
       "warningLevel": 1,
-      "filePath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+      "filePath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
       "libraryId": "Microsoft.AspNetCore.Cors",
       "targetGraphs": [
         "net10.0"
@@ -69,9 +70,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.AspNetCore.SignalR will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+      "projectPath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
       "warningLevel": 1,
-      "filePath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
+      "filePath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.API/WebScrape.API.csproj",
       "libraryId": "Microsoft.AspNetCore.SignalR",
       "targetGraphs": [
         "net10.0"

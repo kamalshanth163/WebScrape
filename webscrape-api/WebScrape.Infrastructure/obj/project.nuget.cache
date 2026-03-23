@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "OkWIMhfjZHI=",
+  "dgSpecHash": "wO/yaxJca7I=",
   "success": true,
-  "projectFilePath": "/home/shan/Desktop/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
+  "projectFilePath": "/home/shan/Desktop/WebScrape/WebScrape/webscrape-api/WebScrape.Infrastructure/WebScrape.Infrastructure.csproj",
   "expectedPackageFiles": [
     "/home/shan/.nuget/packages/anglesharp/1.4.0/anglesharp.1.4.0.nupkg.sha512",
+    "/home/shan/.nuget/packages/cronos/0.8.0/cronos.0.8.0.nupkg.sha512",
     "/home/shan/.nuget/packages/dapper/2.0.123/dapper.2.0.123.nupkg.sha512",
     "/home/shan/.nuget/packages/dapper.aot/1.0.48/dapper.aot.1.0.48.nupkg.sha512",
     "/home/shan/.nuget/packages/fluentvalidation/12.1.1/fluentvalidation.12.1.1.nupkg.sha512",
