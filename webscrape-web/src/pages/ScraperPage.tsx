@@ -111,56 +111,58 @@ export function ScraperPage() {
             </button>
           </div>
         ) : (
-          <table className="ws-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>URL</th>
-                <th>Schedule</th>
-                <th>Status</th>
-                <th>Last run</th>
-                <th>Next run</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.map(job => (
-                <tr key={job.id}>
-                  <td><span className="cell-primary">{job.name}</span></td>
-                  <td><span className="cell-url">{job.url}</span></td>
-                  <td>
-                    <span className={`badge ${job.scheduleType === 'Recurring' ? 'badge-recurring' : 'badge-onetime'}`}>
-                      {job.scheduleType === 'Recurring' ? job.cronExpression : 'One-time'}
-                    </span>
-                  </td>
-                  <td><StatusBadge status={job.status} /></td>
-                  <td>
-                    <span className="cell-muted">
-                      {job.lastRunAt ? format(new Date(job.lastRunAt), 'MMM d, HH:mm') : '—'}
-                    </span>
-                  </td>
-                  <td>
-                    <span className="cell-muted">
-                      {job.nextRunAt ? format(new Date(job.nextRunAt), 'MMM d, HH:mm') : '—'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="actions">
-                      <button className="btn btn-ghost btn-sm" onClick={() => openJobModal(job)}>
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => confirm('Delete this job?') && deleteMutation.mutate(job.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+          <div className="table-scroll">
+            <table className="ws-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>URL</th>
+                  <th>Schedule</th>
+                  <th>Status</th>
+                  <th>Last run</th>
+                  <th>Next run</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {jobs.map(job => (
+                  <tr key={job.id}>
+                    <td><span className="cell-primary">{job.name}</span></td>
+                    <td><span className="cell-url">{job.url}</span></td>
+                    <td>
+                      <span className={`badge ${job.scheduleType === 'Recurring' ? 'badge-recurring' : 'badge-onetime'}`}>
+                        {job.scheduleType === 'Recurring' ? job.cronExpression : 'One-time'}
+                      </span>
+                    </td>
+                    <td><StatusBadge status={job.status} /></td>
+                    <td>
+                      <span className="cell-muted">
+                        {job.lastRunAt ? format(new Date(job.lastRunAt), 'MMM d, HH:mm') : '—'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="cell-muted">
+                        {job.nextRunAt ? format(new Date(job.nextRunAt), 'MMM d, HH:mm') : '—'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="actions">
+                        <button className="btn btn-ghost btn-sm" onClick={() => openJobModal(job)}>
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => confirm('Delete this job?') && deleteMutation.mutate(job.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

@@ -54,61 +54,63 @@ export function ViewerPage() {
           </div>
         ) : (
           <>
-            <table className="ws-table">
-              <thead>
-                <tr>
-                  <th>Date / time</th>
-                  <th>Job</th>
-                  <th>URL</th>
-                  <th>Schedule</th>
-                  <th>Size</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.items.map(r => (
-                  <tr key={r.id}>
-                    <td>
-                      <span className="cell-mono">
-                        {format(new Date(r.scrapedAt), 'MMM d yyyy, HH:mm')}
-                      </span>
-                    </td>
-                    <td><span className="cell-primary">{r.jobName}</span></td>
-                    <td><span className="cell-url">{r.url}</span></td>
-                    <td>
-                      <span className={`badge ${r.scheduleType === 'Recurring' ? 'badge-recurring' : 'badge-onetime'}`}>
-                        {r.scheduleType}
-                      </span>
-                    </td>
-                    <td><span className="cell-muted">{formatBytes(r.fileSizeBytes)}</span></td>
-                    <td>
-                      <span className={`badge ${r.success ? 'badge-success' : 'badge-failed'}`}>
-                        {r.success ? 'Success' : 'Failed'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="actions">
-                        <button
-                          className="btn btn-ghost btn-sm"
-                          onClick={() => handleView(r.id)}
-                        >
-                          View
-                        </button>
-                        <a
-                          href={resultsApi.downloadUrl(r.id)}
-                          download
-                          className="btn btn-ghost btn-sm"
-                          style={{ textDecoration: 'none' }}
-                        >
-                          Download
-                        </a>
-                      </div>
-                    </td>
+            <div className="table-scroll">
+              <table className="ws-table">
+                <thead>
+                  <tr>
+                    <th>Date / time</th>
+                    <th>Job</th>
+                    <th>URL</th>
+                    <th>Schedule</th>
+                    <th>Size</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.items.map(r => (
+                    <tr key={r.id}>
+                      <td>
+                        <span className="cell-mono">
+                          {format(new Date(r.scrapedAt), 'MMM d yyyy, HH:mm')}
+                        </span>
+                      </td>
+                      <td><span className="cell-primary">{r.jobName}</span></td>
+                      <td><span className="cell-url">{r.url}</span></td>
+                      <td>
+                        <span className={`badge ${r.scheduleType === 'Recurring' ? 'badge-recurring' : 'badge-onetime'}`}>
+                          {r.scheduleType}
+                        </span>
+                      </td>
+                      <td><span className="cell-muted">{formatBytes(r.fileSizeBytes)}</span></td>
+                      <td>
+                        <span className={`badge ${r.success ? 'badge-success' : 'badge-failed'}`}>
+                          {r.success ? 'Success' : 'Failed'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="actions">
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            onClick={() => handleView(r.id)}
+                          >
+                            View
+                          </button>
+                          <a
+                            href={resultsApi.downloadUrl(r.id)}
+                            download
+                            className="btn btn-ghost btn-sm"
+                            style={{ textDecoration: 'none' }}
+                          >
+                            Download
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {totalPages > 1 && (
               <div className="pagination">

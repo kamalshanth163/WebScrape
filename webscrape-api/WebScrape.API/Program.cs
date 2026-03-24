@@ -50,9 +50,10 @@ builder.Services.AddSignalR();
 
 // CORS for React frontend
 builder.Services.AddCors(o => o.AddPolicy("AllowFrontend", p =>
-    p.WithOrigins("http://localhost:5173",
-                  builder.Configuration["FRONTEND_URL"] ?? "")
-     .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+    p.WithOrigins(
+        "http://localhost:5173", 
+        builder.Configuration["FRONTEND_URL"] ?? ""
+    ).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
